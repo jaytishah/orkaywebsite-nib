@@ -17,10 +17,9 @@ export default function Navigation() {
         </a>
       </header>
 
-      {/* Same reason it is a sibling and not a child of <header>: the pill
-          blends against the page, so it stays legible over every panel the
-          rail carries under it — black type on the white ones, white on the
-          black ones, with no scripting. */}
+      {/* Frosted glass rather than a colour that has to be swapped: the nav
+          carries its own white panel behind the type, so it stays legible
+          over every panel the rail runs under it. */}
       <nav className="navpill f-grotesk t-parrafo" aria-label="Main">
         {MENU.map((item) => (
           <a key={item.label} href={item.href}>
