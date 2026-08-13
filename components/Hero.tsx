@@ -455,7 +455,8 @@ export default function Hero() {
             ".rail__values__intro"
           );
           if (valuesIntro) rowsTl.to(valuesIntro, { marginRight: "3vw" }, 0);
-          if (rows[2]) rowsTl.to(rows[2], { paddingLeft: "20vw" }, 0);
+          // right-anchored row — it tracks by closing its right margin
+          if (rows[2]) rowsTl.to(rows[2], { marginRight: 0 }, 0);
           subTriggers.push(
             ScrollTrigger.create({
               containerAnimation: scrollTl,

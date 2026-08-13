@@ -785,10 +785,16 @@ main .rail__values__wrap-title {
   gap: 0.8rem;
   width: 100%;
 }
-/* the last row sits one column in, set tighter — reference values */
+/* the last row hangs off the right edge, set tighter — the old
+   `margin-left` kept width:100%, so the row overflowed the panel by a
+   column and left dead space beside the word */
 main .rail__values__row:last-of-type {
-  margin-left: calc(var(--col) * 1 + var(--grid-gap));
+  justify-content: flex-end;
+  margin-right: 12vw; /* GSAP tweens this to 0 as the panel crosses */
   padding-bottom: calc(var(--wrapper-padd) / 2);
+}
+main .rail__values__row:last-of-type .rail__values__wrap-title {
+  width: auto;
 }
 /* reference: the third term switches to the geometric sans (f-izmir) —
    our equivalent face is the geo already loaded for the hero statement */
@@ -902,12 +908,9 @@ main .rail__strip__cards {
   color: var(--ink);
   will-change: width;
 }
-.strip-card:nth-of-type(3n + 2) {
-  background: var(--clay);
-}
-.strip-card:nth-of-type(3n) {
-  background: var(--sky);
-}
+/* each card's panel colour is sampled off its own photograph — see
+   CHAPTERS[].tint in lib/content.ts; the fallback above only shows if a
+   chapter ever lands here without one */
 /* widening the card while shortening the image widens the crop window and
    un-zooms the photo at once — a mask opening outward, never a scale */
 .strip-card__media {

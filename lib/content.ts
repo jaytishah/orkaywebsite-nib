@@ -110,7 +110,16 @@ export type Chapter = {
   text: string;
   image: string;
   alt: string;
+  /** panel colour, sampled off the card's own photograph */
+  tint: string;
 };
+
+/** ink that stays readable on a card's tint — light type over the dark ones */
+export function tintInk(tint: string) {
+  const n = parseInt(tint.slice(1), 16);
+  const lum = 0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255);
+  return lum < 140 ? "var(--bone)" : "var(--ink)";
+}
 
 /** The six real Orkay product categories, with Orkay's own descriptions. */
 export const CHAPTERS: Chapter[] = [
@@ -120,6 +129,7 @@ export const CHAPTERS: Chapter[] = [
     text: "Porcelain tiles are currently very popular for their wide variety of usages including walls to floors to bathroom sink and cabinets.",
     image: "/images/space-porcelain-facade.jpg",
     alt: "Orkay porcelain tiles cladding a modern house facade surrounded by ferns",
+    tint: "#a49a8d",
   },
   {
     num: "(02)",
@@ -127,6 +137,7 @@ export const CHAPTERS: Chapter[] = [
     text: "Porcelain slabs are big in sizes and serve as a better option than natural stone due to its scratch and stain resistance surface and longevity and very low maintance.",
     image: "/images/man-sitting-beige.png",
     alt: "Orkay porcelain slab flooring and feature wall in a living room",
+    tint: "#c5b4a8",
   },
   {
     num: "(03)",
@@ -134,13 +145,15 @@ export const CHAPTERS: Chapter[] = [
     text: "Ceramic tile is a suitable choice for many areas of the home, whether it's walls or backsplashes of kitchen.",
     image: "/images/ceramic-tiles.png",
     alt: "Orkay ceramic wall tiles in a bathroom",
+    tint: "#d2c8bf",
   },
   {
     num: "(04)",
     title: ["Wooden", "Plank"],
     text: "Wood looking porcelain tiles is better choice than natural wood plank due to its low maintenance and quick installation and better prices.",
-    image: "/images/wooden-plank.png",
+    image: "/images/wooden-plank-demo.png",
     alt: "Orkay wooden plank porcelain on a living room wall and floor",
+    tint: "#4b2407",
   },
   {
     num: "(05)",
@@ -148,6 +161,7 @@ export const CHAPTERS: Chapter[] = [
     text: "Tiles as countertop are gaining huge popularity because its non pours, resistance to heat and durable surface makes it better choice than granite or marble.",
     image: "/images/IHBEIGE.png",
     alt: "Orkay counter top slab on a kitchen island",
+    tint: "#c9b094",
   },
   {
     num: "(06)",
@@ -155,5 +169,6 @@ export const CHAPTERS: Chapter[] = [
     text: "Outdoor tiles are often made to survive the most severe weather conditions, including rain, sunshine, and temperature changes.",
     image: "/images/outdoor-tiles.png",
     alt: "Orkay blue marble-look porcelain floor seen from above, a woman reading in a blue lounge chair",
+    tint: "#c0ab95",
   },
 ];

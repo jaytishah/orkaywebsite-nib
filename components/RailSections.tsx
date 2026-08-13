@@ -5,6 +5,7 @@ import {
   VALUES,
   VALUES_IMAGE,
   VALUES_INTRO,
+  tintInk,
 } from "@/lib/content";
 import OverlayImageSequence from "./OverlayImageSequence";
 
@@ -205,7 +206,12 @@ export default function RailSections() {
 
         <div className="rail__strip__cards">
           {CHAPTERS.slice(0, 5).map((chapter) => (
-            <article className="strip-card" data-strip-card key={chapter.num}>
+            <article
+              className="strip-card"
+              data-strip-card
+              key={chapter.num}
+              style={{ background: chapter.tint, color: tintInk(chapter.tint) }}
+            >
               <div className="strip-card__media" data-card-media>
                 <img src={chapter.image} alt={chapter.alt} />
               </div>
@@ -242,7 +248,14 @@ export default function RailSections() {
            The empty .rail__pin after it buys the horizontal distance the
            frozen beat consumes. */}
       <div className="rail__handoff" data-panel="handoff">
-        <article className="strip-card rail__handoff__card" data-handoff-card>
+        <article
+          className="strip-card rail__handoff__card"
+          data-handoff-card
+          style={{
+            background: CHAPTERS[5].tint,
+            color: tintInk(CHAPTERS[5].tint),
+          }}
+        >
           <div className="rail__handoff__inner" data-handoff-content>
             <div className="strip-card__media" data-card-media>
               <img src={CHAPTERS[5].image} alt={CHAPTERS[5].alt} />
