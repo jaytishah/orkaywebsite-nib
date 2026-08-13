@@ -1186,15 +1186,17 @@ main .rail__cierre__title em {
   white-space: nowrap;
   color: var(--ink);
 }
-/* the word sits on its own block, so the hover fills behind it */
+/* the word sits on its own block, so the hover fills behind it — an oval
+   inside the oval. The fill is the brand red lifted toward white, so it
+   stays tied to the token rather than being a second red to keep in step. */
 .navpill a {
   display: inline-block;
-  padding: 0.35rem 0.9rem;
-  border-radius: 0.45rem;
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
   transition: background 0.3s ease, color 0.3s ease;
 }
 .navpill a:hover {
-  background: var(--red);
+  background: color-mix(in srgb, var(--red) 78%, white);
   color: var(--white);
 }
 
