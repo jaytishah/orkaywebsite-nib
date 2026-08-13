@@ -58,7 +58,7 @@ export default function Home() {
               src="/images/orkay-logo.svg"
               alt={BRAND.name}
             />
-            <p className="showcase__mark__tagline f-edit">
+            <p className="showcase__mark__tagline f-grotesk">
               {SHOWCASE_MARK.tagline}
             </p>
             <p className="showcase__mark__line t-subtitulo f-grotesk t-upper">

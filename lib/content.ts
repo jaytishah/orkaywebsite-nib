@@ -139,7 +139,7 @@ export const CHAPTERS: Chapter[] = [
     num: "(04)",
     title: ["Wooden", "Plank"],
     text: "Wood looking porcelain tiles is better choice than natural wood plank due to its low maintenance and quick installation and better prices.",
-    image: "/images/woodenplank.png",
+    image: "/images/wooden-plank.png",
     alt: "Orkay wooden plank porcelain on a living room wall and floor",
   },
   {

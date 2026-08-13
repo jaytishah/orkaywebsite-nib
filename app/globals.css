@@ -831,7 +831,7 @@ main .rail__values__intro {
   position: absolute;
   top: 0;
   left: 0;
-  width: 18em; /* reference: 18em desktop */
+  width: 12em;
   aspect-ratio: 1/1;
   z-index: 10;
   overflow: clip;
@@ -1282,21 +1282,17 @@ body.on-dark .navpill {
   min-height: var(--100vh);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  padding: var(--wrapper-padd);
+  /* the top band is the label's own, matching the reference's 180px @1920 */
+  padding: 9.375vw var(--wrapper-padd) var(--wrapper-padd);
   background: var(--bone);
   color: var(--ink);
   overflow: clip;
 }
+/* in flow, not absolute: the title centres in whatever is left below it, so
+   however short the window gets the two can never cross */
 .statement__contact {
-  position: absolute;
-  /* the reference seats this 180px below the section's top edge at 1920
-     (its .mod-title padding-top); at the old --wrapper-padd it ran under
-     the fixed nav whenever the section's top met the viewport's */
-  top: 9.375vw;
-  left: 50%;
-  transform: translateX(-50%);
+  flex: 0 0 auto;
   font-size: var(--parrafo-l);
   line-height: var(--parrafo-l-lh);
   color: inherit;
@@ -1312,11 +1308,24 @@ body.on-dark .navpill {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  /* "DESIGN BEYOND" measures 96.5vw at this size, but the section's padding
+     is rem-based and grows to 4.3vw below 1536px — leaving 95.7vw, so the
+     line wrapped and its third row ran into the label. The title clears the
+     padding and takes the section's full width, which keeps the same ~3.5vw
+     of slack at every viewport since both text and type are vw-scaled.
+     `auto` block margins centre it in the space under the label and collapse
+     to 0 rather than overlapping it when the window is too short. */
+  width: calc(100% + var(--wrapper-padd) * 2);
+  margin: auto calc(var(--wrapper-padd) * -1);
   font-family: var(--font-brand), "Playfair Display", "Didot", serif;
   font-size: 12.5vw;
   line-height: 0.875;
   font-weight: 400;
   letter-spacing: -0.0069em;
+}
+/* authored display lines — they set their own breaks and never reflow */
+.statement__title span {
+  white-space: nowrap;
 }
 /* the second half of the wordmark, inverted in the corner — the mark the
    fixed header has already faded out by this point */
@@ -1380,17 +1389,16 @@ body.on-dark .navpill {
   color: var(--ink);
 }
 .showcase__mark__logo {
-  width: calc(var(--col) * 3 + var(--grid-gap) * 2);
+  width: calc(var(--col) * 2.5 + var(--grid-gap) * 1.5);
   height: auto;
 }
 .showcase__mark__tagline {
-  margin-top: 1.4rem;
-  font-size: var(--titulo-xl);
-  line-height: var(--titulo-xl-lh);
-  font-style: italic;
+  margin-top: 0.8rem;
+  font-size: var(--parrafo-l);
+  line-height: var(--parrafo-l-lh);
 }
 .showcase__mark__line {
-  margin-top: 0.9rem;
+  margin-top: 0.45rem;
   color: var(--grey);
 }
 
@@ -2018,11 +2026,7 @@ body.on-dark .navpill {
     padding-top: 2rem;
   }
   .showcase__mark__logo {
-    width: 9rem;
-  }
-  .showcase__mark__tagline {
-    font-size: var(--titulo-l);
-    line-height: var(--titulo-l-lh);
+    width: 8rem;
   }
 
   .pitch {
