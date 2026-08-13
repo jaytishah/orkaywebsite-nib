@@ -49,6 +49,15 @@ export default function Hero() {
         rail.querySelectorAll<HTMLElement>("[data-caption]")
       );
 
+      /* "a dark panel is under the fixed chrome" — one signal, two consumers:
+         the mark crosses to its white cut, and the nav pill swaps to light
+         type. Without the second the pill's ink would sit on near-black. */
+      const whiteMark = document.querySelector("[data-logo-white]");
+      const setDark = (on: boolean, duration = 0.25) => {
+        gsap.to(whiteMark, { opacity: on ? 1 : 0, duration });
+        document.body.classList.toggle("on-dark", on);
+      };
+
       /* ================================================================
          LOAD — the composition assembles, then holds
          ================================================================ */
@@ -712,17 +721,15 @@ export default function Hero() {
           });
         }
 
-        // the fixed mark inverts while a dark panel is under it
-        const whiteMark = document.querySelector("[data-logo-white]");
-        gsap.set(whiteMark, { opacity: 1 }); // black intro is under it at rest
+        // the fixed chrome inverts while a dark panel is under it
+        setDark(true, 0); // black intro is under it at rest
         subTriggers.push(
           ScrollTrigger.create({
             containerAnimation: scrollTl,
             trigger: rail.querySelector<HTMLElement>('[data-panel="intro"]'),
             start: "100% 3%",
-            onEnter: () => gsap.to(whiteMark, { opacity: 0, duration: 0.25 }),
-            onLeaveBack: () =>
-              gsap.to(whiteMark, { opacity: 1, duration: 0.25 }),
+            onEnter: () => setDark(false),
+            onLeaveBack: () => setDark(true),
           })
         );
         rail
@@ -736,14 +743,20 @@ export default function Hero() {
                 trigger: panel,
                 start: "0% 3%",
                 end: "100% 3%",
-                onToggle: (self) =>
-                  gsap.to(whiteMark, {
-                    opacity: self.isActive ? 1 : 0,
-                    duration: 0.25,
-                  }),
+                onToggle: (self) => setDark(self.isActive),
               })
             );
           });
+        // the rail is not the whole page — the closing section is black too,
+        // and the pill is still on screen over it
+        subTriggers.push(
+          ScrollTrigger.create({
+            trigger: "#outro",
+            start: "top 3%",
+            end: "bottom 3%",
+            onToggle: (self) => setDark(self.isActive),
+          })
+        );
 
         // header + indicator step aside once the closing panel has arrived
         const headerEls = document.querySelectorAll(
@@ -903,17 +916,12 @@ export default function Hero() {
         }
 
         // the mark starts over the black intro panel, then crosses onto white
-        const whiteMark = document.querySelector("[data-logo-white]");
-        gsap.set([whiteMark], { opacity: 1 });
+        setDark(true, 0);
         const markSwap = ScrollTrigger.create({
           trigger: rail.querySelector('[data-panel="intro"]'),
           start: "bottom 12%",
-          onEnter: () => {
-            gsap.to(whiteMark, { opacity: 0, duration: 0.25 });
-          },
-          onLeaveBack: () => {
-            gsap.to(whiteMark, { opacity: 1, duration: 0.25 });
-          },
+          onEnter: () => setDark(false),
+          onLeaveBack: () => setDark(true),
         });
 
         return () => {
