@@ -1176,23 +1176,25 @@ main .rail__cierre__title em {
   align-items: center;
   gap: 0.3rem;
   padding: 0.3rem 0.5rem;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.22);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  /* nothing behind the words but the page — the ring alone carries the oval */
+  background: transparent;
   text-transform: uppercase;
   /* a wrapped label would break the oval into a lozenge */
   white-space: nowrap;
   color: var(--ink);
   transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
-/* over a dark panel the type carries itself, so the glass can nearly vanish.
-   Hero.tsx sets .on-dark from the same triggers that invert the mark. */
+/* with no fill of its own the pill lives or dies on its type: Hero.tsx sets
+   .on-dark from the same triggers that invert the mark, and the words and
+   ring cross to white with it. */
 body.on-dark .navpill {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.32);
   color: var(--white);
+  /* invisible against the flat black panels; over the closing panel's pale
+     photography it is the only thing holding the white type up */
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.55);
 }
 /* the word sits on its own block, so the hover fills behind it — an oval
    inside the oval. The fill is the brand red lifted toward white, so it
@@ -1583,17 +1585,24 @@ body.on-dark .navpill {
     gap: 0.2rem;
     padding: 0.25rem 0.4rem;
     font-size: var(--subtitulo);
-    /* the rail runs vertically here, so the pill meets panels the desktop
-       triggers do not track — it carries enough white to hold ink type
-       against any of them */
-    background: rgba(255, 255, 255, 0.62);
+    /* the rail runs vertically here, so the pill meets panels the dark-panel
+       triggers do not track. With no fill to sit on, difference blending is
+       what keeps it legible against all of them — and there is no hover to
+       invert on a touch screen. */
+    color: var(--white);
+    border-color: currentColor;
+    mix-blend-mode: difference;
   }
   body.on-dark .navpill {
-    background: rgba(255, 255, 255, 0.62);
-    color: var(--ink);
+    border-color: currentColor;
+    color: var(--white);
   }
   .navpill a {
     padding: 0.3rem 0.7rem;
+  }
+  .navpill a:hover {
+    background: none;
+    color: inherit;
   }
   /* one column: the stagger survives as an indent on the middle line, and
      nothing has a nav rail to avoid — it is hidden at this width */
