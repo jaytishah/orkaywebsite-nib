@@ -1,7 +1,7 @@
 import BrandStretch from "@/components/BrandStretch";
 import Hero from "@/components/Hero";
 import Navigation from "@/components/Navigation";
-import { BRAND, CONTACT, CHAPTERS } from "@/lib/content";
+import { BRAND, CONTACT, CHAPTERS, SHOWCASE_MARK } from "@/lib/content";
 
 export default function Home() {
   return (
@@ -41,12 +41,31 @@ export default function Home() {
             alt="A father marking his son's height against a marble-look tiled wall"
           />
         </figure>
-        <figure className="showcase__small">
-          <img
-            src="/images/space-beige-living.png"
-            alt="Beige marble-look porcelain feature wall and floor in a living room"
-          />
-        </figure>
+        {/* the right column runs the full height of the square beside it, so
+            the mark falls to the bottom of the dead space under the
+            landscape image rather than floating directly beneath it */}
+        <div className="showcase__col">
+          <figure className="showcase__small">
+            <img
+              src="/images/space-beige-living.png"
+              alt="Beige marble-look porcelain feature wall and floor in a living room"
+            />
+          </figure>
+
+          <div className="showcase__mark">
+            <img
+              className="showcase__mark__logo"
+              src="/images/orkay-logo.svg"
+              alt={BRAND.name}
+            />
+            <p className="showcase__mark__tagline f-edit">
+              {SHOWCASE_MARK.tagline}
+            </p>
+            <p className="showcase__mark__line t-subtitulo f-grotesk t-upper">
+              {SHOWCASE_MARK.line}
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* ---- the pitch ----

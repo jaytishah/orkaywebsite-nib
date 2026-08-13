@@ -1356,9 +1356,42 @@ body.on-dark .navpill {
   flex: 0 0 calc(var(--col) * 6 + var(--grid-gap) * 5);
   aspect-ratio: 1 / 1;
 }
-.showcase__small {
+/* the column stretches to the square's height, so the mark can sit on its
+   bottom line instead of hanging under the landscape image */
+.showcase__col {
   flex: 0 0 calc(var(--col) * 6 + var(--grid-gap) * 5);
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+}
+.showcase__small {
+  flex: 0 0 auto;
+  width: 100%;
   aspect-ratio: 16 / 9;
+}
+/* right-aligned against the measure's edge, pushed to the foot of the column */
+.showcase__mark {
+  margin-top: auto;
+  padding-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  color: var(--ink);
+}
+.showcase__mark__logo {
+  width: calc(var(--col) * 3 + var(--grid-gap) * 2);
+  height: auto;
+}
+.showcase__mark__tagline {
+  margin-top: 1.4rem;
+  font-size: var(--titulo-xl);
+  line-height: var(--titulo-xl-lh);
+  font-style: italic;
+}
+.showcase__mark__line {
+  margin-top: 0.9rem;
+  color: var(--grey);
 }
 
 /* ---------- the pitch ---------- */
@@ -1970,7 +2003,7 @@ body.on-dark .navpill {
     padding-bottom: 4rem;
   }
   .showcase__large,
-  .showcase__small {
+  .showcase__col {
     flex: 0 0 auto;
     width: 100%;
   }
@@ -1978,6 +2011,18 @@ body.on-dark .navpill {
     width: 70%;
     align-self: flex-end;
     margin-top: -3rem;
+  }
+  /* stacked: no dead space left to fall into, so the mark just follows */
+  .showcase__mark {
+    margin-top: 0;
+    padding-top: 2rem;
+  }
+  .showcase__mark__logo {
+    width: 9rem;
+  }
+  .showcase__mark__tagline {
+    font-size: var(--titulo-l);
+    line-height: var(--titulo-l-lh);
   }
 
   .pitch {

@@ -44,6 +44,17 @@ export const MENU = [
 ] as const;
 
 /**
+ * The showcase pair's right column, under the landscape image. Every line is
+ * Orkay's own: Morbi is where the factories are (see the intro paragraph),
+ * and the export desk in the header is the "to the world" half.
+ */
+export const SHOWCASE_MARK = {
+  tagline: "From Morbi to the world.",
+  /* the mark carries "since 1996" already — this line only places it */
+  line: BRAND.place,
+} as const;
+
+/**
  * The values panel — geometry and type ported value-for-value from the
  * reference terms section. One image rides the pointer for all three rows.
  */
@@ -128,7 +139,7 @@ export const CHAPTERS: Chapter[] = [
     num: "(04)",
     title: ["Wooden", "Plank"],
     text: "Wood looking porcelain tiles is better choice than natural wood plank due to its low maintenance and quick installation and better prices.",
-    image: "/images/GIRL-SLEEPING.png",
+    image: "/images/woodenplank.png",
     alt: "Orkay wooden plank porcelain on a living room wall and floor",
   },
   {
@@ -142,7 +153,7 @@ export const CHAPTERS: Chapter[] = [
     num: "(06)",
     title: ["Outdoor", "Tiles"],
     text: "Outdoor tiles are often made to survive the most severe weather conditions, including rain, sunshine, and temperature changes.",
-    image: "/images/outdoor-tiles.jpg",
+    image: "/images/outdoor-tiles.png",
     alt: "Orkay blue marble-look porcelain floor seen from above, a woman reading in a blue lounge chair",
   },
 ];
