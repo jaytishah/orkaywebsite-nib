@@ -32,7 +32,9 @@ const jost = Jost({
    footless tail, which is wrong for the mark and reads badly elongated.) */
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["900"],
+  /* 900 for the footer wordmark; 400 is the statement panel, standing in for
+     the reference's Juana Regular (licensed, so not ours to ship). */
+  weight: ["400", "900"],
   variable: "--font-brand",
   display: "swap",
 });

@@ -20,7 +20,7 @@ export default function Home() {
           (Contact us)
         </a>
 
-        <h2 className="statement__title f-edit t-upper lh-less2">
+        <h2 className="statement__title t-upper">
           <span>Design beyond</span>
           <span>the surface</span>
         </h2>

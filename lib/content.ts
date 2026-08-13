@@ -18,6 +18,17 @@ export const CONTACT = {
   exportSales: "+91 97120 54222",
 } as const;
 
+/**
+ * The images panel's own chrome — reference: a single statement line across
+ * the top of the section and the collection's wordmark set upside down in
+ * the opposite corner, its line above it.
+ */
+export const HERO_MARK = {
+  headline: "Surfaces beyond the ordinary",
+  name: "Orchid Isles",
+  tagline: BRAND.tagline,
+} as const;
+
 export const NAV = [
   { label: "About Us", href: "#about" },
   { label: "Our Products", href: "#chapters" },
@@ -110,7 +121,7 @@ export const CHAPTERS: Chapter[] = [
     num: "(03)",
     title: ["Ceramic", "Tiles"],
     text: "Ceramic tile is a suitable choice for many areas of the home, whether it's walls or backsplashes of kitchen.",
-    image: "/images/space-ceramic-bathroom.jpg",
+    image: "/images/ceramic-tiles.png",
     alt: "Orkay ceramic wall tiles in a bathroom",
   },
   {
@@ -131,7 +142,7 @@ export const CHAPTERS: Chapter[] = [
     num: "(06)",
     title: ["Outdoor", "Tiles"],
     text: "Outdoor tiles are often made to survive the most severe weather conditions, including rain, sunshine, and temperature changes.",
-    image: "/images/space-blue-marble-living.jpg",
+    image: "/images/outdoor-tiles.jpg",
     alt: "Orkay blue marble-look porcelain floor seen from above, a woman reading in a blue lounge chair",
   },
 ];

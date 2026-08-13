@@ -1,4 +1,5 @@
 import OverlayImageSequence, { FlipImage } from "./OverlayImageSequence";
+import { HERO_MARK } from "@/lib/content";
 
 /**
  * The overlay sequence — MATERIAL, against the SPACE behind it.
@@ -32,6 +33,9 @@ export const MATERIALS: (FlipImage & { caption: string })[] = [
 export default function HeroImage() {
   return (
     <div className="rail__images principal" data-panel="images">
+      {/* reference: the statement runs across the top of the section */}
+      <h2 className="rail__images__headline t-upper">{HERO_MARK.headline}</h2>
+
       <div className="media rail__images__image-single" data-hero-main>
         {/* over-wide, so the leftward parallax never exposes the panel */}
         <div className="media__wrap-source image" data-hero-main-inner>
@@ -51,6 +55,18 @@ export default function HeroImage() {
             {m.caption}
           </span>
         ))}
+      </div>
+
+      {/* reference: the wordmark inverted in the bottom-right corner, its
+          line set above it — the whole block rotated, ® leading */}
+      <div className="rail__images__mark">
+        <span className="rail__images__mark__word f-edit t-upper">
+          {HERO_MARK.name}
+          <sup>®</sup>
+        </span>
+        <span className="rail__images__mark__tag f-edit">
+          {HERO_MARK.tagline}
+        </span>
       </div>
     </div>
   );

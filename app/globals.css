@@ -549,6 +549,53 @@ main .rail__images__caption span {
   white-space: nowrap;
 }
 
+/* the section's own chrome — the statement across the top, the collection
+   mark inverted in the far corner. Both are laid over the panel rather than
+   given their own band: blend-difference so they read whether they land on
+   the cream ground or on the photograph. */
+main .rail__images__headline {
+  position: absolute;
+  top: var(--wrapper-padd);
+  left: var(--wrapper-padd);
+  z-index: 4;
+  font-family: var(--f-geo);
+  font-size: var(--titulo-xl);
+  line-height: 1;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  color: var(--white);
+  mix-blend-mode: difference;
+}
+main .rail__images__mark {
+  position: absolute;
+  right: calc(var(--grid-gap) * 2);
+  bottom: var(--wrapper-padd);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  /* rotated, so the word renders under the line and both hang off the
+     right edge — the reference's corner exactly */
+  align-items: flex-start;
+  gap: 0.35rem;
+  transform: rotate(180deg);
+  color: var(--white);
+  mix-blend-mode: difference;
+}
+main .rail__images__mark__word {
+  font-size: var(--titulo-l);
+  line-height: 0.8;
+  letter-spacing: -0.01em;
+}
+main .rail__images__mark__word sup {
+  font-size: 0.35em;
+  vertical-align: super;
+}
+main .rail__images__mark__tag {
+  font-size: var(--parrafo);
+  font-style: italic;
+}
+
 /* ---------- panel 3 : editorial statement ---------- */
 main .rail__text {
   background: var(--white);
@@ -1244,7 +1291,10 @@ body.on-dark .navpill {
 }
 .statement__contact {
   position: absolute;
-  top: var(--wrapper-padd);
+  /* the reference seats this 180px below the section's top edge at 1920
+     (its .mod-title padding-top); at the old --wrapper-padd it ran under
+     the fixed nav whenever the section's top met the viewport's */
+  top: 9.375vw;
   left: 50%;
   transform: translateX(-50%);
   font-size: var(--parrafo-l);
@@ -1252,14 +1302,21 @@ body.on-dark .navpill {
   color: inherit;
   text-decoration: none;
 }
+/* Metrics measured off the reference's own statement (.anima__title) at six
+   viewports: 12.5vw at every one of them, line-height 0.875, letter-spacing
+   -1.65px at 240px. Its face is Juana Regular — a licensed Latinotype family
+   we cannot ship, so this is Playfair Display, the nearest free cut of the
+   same high-contrast serif. Swap the family here if Juana is licensed. */
 .statement__title {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  font-size: 11.2vw;
+  font-family: var(--font-brand), "Playfair Display", "Didot", serif;
+  font-size: 12.5vw;
+  line-height: 0.875;
   font-weight: 400;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.0069em;
 }
 /* the second half of the wordmark, inverted in the corner — the mark the
    fixed header has already faded out by this point */
@@ -1635,6 +1692,21 @@ body.on-dark .navpill {
   main .rail__images {
     padding-right: 0;
     padding-bottom: 5.5rem;
+  }
+  /* the bottom corner belongs to the overlay here — the mark takes the
+     opposite top corner instead, still inverted */
+  main .rail__images__headline {
+    font-size: var(--titulo);
+    max-width: 55%;
+    white-space: normal;
+  }
+  main .rail__images__mark {
+    top: var(--wrapper-padd);
+    right: var(--wrapper-padd);
+    bottom: auto;
+  }
+  main .rail__images__mark__word {
+    font-size: var(--titulo);
   }
   main .rail__images__image-single {
     aspect-ratio: 375/281;
