@@ -837,7 +837,7 @@ main .rail__values__intro {
   position: absolute;
   top: 0;
   left: 0;
-  width: 12em;
+  width: 18em;
   aspect-ratio: 1/1;
   z-index: 10;
   overflow: clip;
@@ -1552,59 +1552,111 @@ body.on-dark .navpill {
   clip-path: inset(var(--cut) 0 0 0);
   will-change: transform;
 }
-/* reference: the project image beside the stretched letters. Its bottom
-   offset puts it on the R's final baseline: the R overshoots the line box
-   bottom padding slack (0.1) plus the font's descender band (~0.13em) that
-   sits under the caps. Parked fully clipped; the timeline wipes it in. */
-.brand__figure {
+/* ---------- the paper plane ----------
+   Rides the R's elongation: a 0x0 anchor parked on the cut line, a few px
+   clear of the glyph's right edge so the stem and the plane never overlap.
+   BrandStretch.tsx drives its y (and the trail's height) from st.r. */
+.brand__plane {
+  position: absolute;
+  top: var(--cut);
+  left: calc(100% + 0.4rem);
+  width: 0;
+  height: 0;
+  color: #d93a2b;
+  will-change: transform;
+}
+/* a 0x0 carrier GSAP's motionPath drives along the arc — rotation pivots
+   on its point, which is where the margins below park the nose */
+.brand__plane__ship {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  will-change: transform;
+}
+/* nose (bottom of the glyph) on the carrier's point — margins, not a CSS
+   transform, so the flight's rotation starts from a clean slate */
+.brand__plane__ship svg {
+  display: block;
+  width: 40px;
+  height: 40px;
+  margin: -40px 0 0 -20px;
+}
+/* the flight arc — a 0-size svg whose path spills out visibly; the path
+   data comes from setArc() in BrandStretch.tsx */
+.brand__arc {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  overflow: visible;
+}
+/* the vertical trail is a growing dashed border — no SVG, no dashoffset */
+.brand__trail {
+  position: absolute;
+  top: var(--cut);
+  left: calc(100% + 0.4rem);
+  width: 0;
+  height: 0;
+  border-left: 4px dashed #d93a2b;
+}
+/* a soft pulse at the impact point — the globe's left edge, cut
+   horizontally — with the label beside it on the globe */
+.brand__glow {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 9vw;
+  height: 9vw;
+  margin: -4.5vw 0 0 -4.5vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 235, 225, 0.6), transparent 70%);
+  filter: blur(6px);
+  opacity: 0;
+}
+.brand__glow__label {
+  position: absolute;
+  top: 50%;
+  left: 12%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-size: var(--parrafo-l);
+  line-height: var(--parrafo-l-lh);
+  color: #fff;
+  opacity: 0;
+}
+/* ---------- the globe ----------
+   The closing frame on the section's right, where the figure used to sit —
+   fully inside the padding band, so nothing clips it. The classic
+   spinning-globe trick: an equirectangular texture (generated — red land,
+   40 white country dots, connection arcs out of India) slides behind a
+   circle; inset shadows round it into a sphere. The plane's flight line
+   crosses its lower-left curve, so the nose flies into it. */
+.brand__globe {
   position: absolute;
   right: var(--wrapper-padd);
-  bottom: calc(var(--brand-size) * 0.23 + var(--brand-caption));
-  width: calc(var(--col) * 5 + var(--grid-gap) * 4);
-  aspect-ratio: 3 / 2;
-  text-align: center;
+  bottom: calc(var(--brand-size) * 0.23 + 6vw);
+  width: 38vw;
+  height: 38vw;
+  border-radius: 50%;
+  background: #a31f14 url("/images/globe-texture.svg");
+  background-size: 200% 100%;
+  background-repeat: repeat-x;
+  box-shadow:
+    inset -3vw -2.5vw 6vw rgba(0, 0, 0, 0.4),
+    inset 2vw 2vw 5vw rgba(255, 255, 255, 0.16),
+    0 0 7vw rgba(217, 58, 43, 0.4);
+  animation: brand-globe-spin 40s linear infinite;
+  opacity: 0;
 }
-/* only the picture is clipped — the label and caption hang outside the
-   figure's box, so neither one can shift the image off the R's foot */
-.brand__figure__media {
-  position: absolute;
-  inset: 0;
-  overflow: clip;
-  clip-path: inset(100% 0 0 0);
+/* -200% of a 200%-wide texture = exactly one full image width — seamless */
+@keyframes brand-globe-spin {
+  to {
+    background-position-x: -200%;
+  }
 }
-.brand__figure__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
-}
-.brand__figure__label {
-  position: absolute;
-  bottom: calc(100% + 1.5rem);
-  left: 0;
-  width: 100%;
-  font-size: var(--parrafo-l);
-  line-height: var(--parrafo-l-lh);
-}
-.brand__figure__caption {
-  position: absolute;
-  top: calc(100% + 2.1rem);
-  left: 0;
-  width: 100%;
-}
-.brand__figure__title {
-  display: block;
-  font-size: var(--titulo-l);
-  line-height: 1;
-  letter-spacing: 0.02em;
-}
-.brand__figure__note {
-  display: block;
-  margin-top: 0.9rem;
-  font-size: var(--parrafo-l);
-  line-height: var(--parrafo-l-lh);
-}
-
 .outro {
   position: relative;
   z-index: 2;
@@ -2066,16 +2118,9 @@ body.on-dark .navpill {
   .brand {
     --brand-caption: 6rem;
   }
-  .brand__figure {
+  .brand__globe {
     width: 62vw;
-  }
-  .brand__figure__title {
-    font-size: var(--titulo);
-  }
-  .brand__figure__label,
-  .brand__figure__note {
-    font-size: var(--parrafo);
-    line-height: var(--parrafo-lh);
+    height: 62vw;
   }
 
   .outro__grid {
@@ -2094,5 +2139,13 @@ body.on-dark .navpill {
   * {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
+  }
+  /* no flight — the plane parks on the cut line, the label and globe just
+     show. BrandStretch.tsx skips the plane tweens under the same query, so
+     these opacities are never overridden by inline styles. The global rule
+     above already freezes the globe's spin. */
+  .brand__glow__label,
+  .brand__globe {
+    opacity: 1;
   }
 }

@@ -361,7 +361,7 @@ export default function RailSections() {
                 alt: "Orkay wooden plank porcelain on a living room wall and floor",
               },
               {
-                src: "/images/space-white-marble.jpg",
+                src: "/images/white-marble-ih.png",
                 alt: "Orkay white marble-look porcelain wall and floor, a man in a black suit standing against it",
               },
             ]}
