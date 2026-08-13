@@ -25,6 +25,13 @@ export const NAV = [
   { label: "Contact Us", href: "#outro" },
 ] as const;
 
+/** The fixed pill nav. `#top` is the document head — see Hero.tsx. */
+export const MENU = [
+  { label: "Home", href: "#top" },
+  { label: "About Us", href: "#about" },
+  { label: "Products", href: "#chapters" },
+] as const;
+
 /**
  * The values panel — geometry and type ported value-for-value from the
  * reference terms section. One image rides the pointer for all three rows.

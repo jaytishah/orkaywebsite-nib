@@ -235,6 +235,8 @@ export default function Hero() {
         });
 
         const st = ScrollTrigger.create({
+          // the anchor handler below reads this back to place the nav's jumps
+          id: "rail-pin",
           animation: scrollTl,
           trigger: viewport,
           pin: true,
@@ -924,6 +926,39 @@ export default function Hero() {
       return () => mm.revert();
     }, viewportRef);
 
+    /* Every in-page anchor, rail-aware. While the hero is pinned the panels
+       on the rail all occupy the same document position — a native jump to
+       one lands on the pin start, whichever panel was asked for. The rail
+       translates linearly across the pin's range, so a panel's own offset
+       along the rail is exactly its share of that range. Off the rail (and
+       on mobile, where the rail unrolls vertically) it is a plain scroll. */
+    const onAnchorClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.button !== 0) return;
+      const el = e.target instanceof Element ? e.target : null;
+      const link = el?.closest<HTMLAnchorElement>('a[href^="#"]');
+      if (!link) return;
+
+      const id = link.getAttribute("href")!.slice(1);
+      if (id === "top") {
+        e.preventDefault();
+        return lenis.scrollTo(0);
+      }
+      const target = id && document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+
+      const rail = railRef.current!;
+      const pin = ScrollTrigger.getById("rail-pin");
+      const panel = target.closest<HTMLElement>(".rail > *");
+      if (pin && panel && rail.contains(panel)) {
+        const travel = rail.scrollWidth - window.innerWidth;
+        const progress = travel > 0 ? panel.offsetLeft / travel : 0;
+        return lenis.scrollTo(pin.start + progress * (pin.end - pin.start));
+      }
+      lenis.scrollTo(target);
+    };
+    document.addEventListener("click", onAnchorClick);
+
     const onResize = () => {
       setVh();
       ScrollTrigger.refresh();
@@ -931,6 +966,7 @@ export default function Hero() {
     window.addEventListener("resize", onResize);
 
     return () => {
+      document.removeEventListener("click", onAnchorClick);
       window.removeEventListener("resize", onResize);
       gsap.ticker.remove(raf);
       lenis.destroy();

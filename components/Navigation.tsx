@@ -1,4 +1,4 @@
-import { CONTACT } from "@/lib/content";
+import { CONTACT, MENU } from "@/lib/content";
 
 /** Deliberately minimal — mark and one line of contact, nothing that
  *  competes with the hero composition.
@@ -16,6 +16,18 @@ export default function Navigation() {
           <img src="/images/orkay-logo-white.svg" alt="" data-logo-white />
         </a>
       </header>
+
+      {/* Same reason it is a sibling and not a child of <header>: the pill
+          blends against the page, so it stays legible over every panel the
+          rail carries under it — black type on the white ones, white on the
+          black ones, with no scripting. */}
+      <nav className="navpill f-grotesk t-parrafo" aria-label="Main">
+        {MENU.map((item) => (
+          <a key={item.label} href={item.href}>
+            {item.label}
+          </a>
+        ))}
+      </nav>
 
       <a
         className="header__contact f-grotesk t-parrafo"
