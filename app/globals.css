@@ -1,0 +1,1899 @@
+/* ============================================================
+   ORKAY TILES
+   Type + grid + motion system ported from the reference
+   experience (normalisboring.es) — tokens, fluid rem base,
+   12-column arithmetic, flipMedia clip/slide primitives.
+   Only content, imagery and branding are Orkay.
+   ============================================================ */
+
+/* ---------- fluid rem base (reference: --fsize) ---------- */
+:root {
+  --fsize: 1.0416666667vw; /* 1rem = 20px @ 1920 */
+
+  --f-grotesk: var(--font-grotesk), "Helvetica Neue", Arial, sans-serif;
+  --f-edit: var(--font-edit), Georgia, serif;
+  /* the hero statement's geometric sans — monoline, circular O */
+  --f-geo: var(--font-geo), "Century Gothic", "Futura", sans-serif;
+
+  /* type scale — verbatim from the reference */
+  --supertitulo-xl: 12rem;
+  --supertitulo-l: 9.5rem;
+  --supertitulo: 6.5rem;
+  --titulo-xxl: 3.5rem;
+  --titulo-xl: 3rem;
+  --titulo-l: 2.25rem;
+  --titulo: 1.65rem;
+  --parrafo-xl: 1.4rem;
+  --parrafo-l: 1rem;
+  --parrafo: 0.85rem;
+  --subtitulo: 0.7rem;
+
+  --supertitulo-xl-lh: 10.5rem;
+  --supertitulo-l-lh: 9.5rem;
+  --supertitulo-lh: 6.5rem;
+  --titulo-xxl-lh: 3.5rem;
+  --titulo-xl-lh: 3.5rem;
+  --titulo-l-lh: 2.7rem;
+  --titulo-lh: 2.2rem;
+  --parrafo-xl-lh: 1.85rem;
+  --parrafo-l-lh: 1.4rem;
+  --parrafo-lh: 1.15rem;
+  --subtitulo-lh: 0.9rem;
+
+  /* grid — verbatim from the reference */
+  --grid-gap: 1.5rem;
+  --wrapper-padd: 1.65rem;
+  --col: calc((99.9vw - var(--wrapper-padd) * 2 - var(--grid-gap) * 11) / 12);
+
+  /* hero panel geometry */
+  --intro-w: 80vw; /* reference rest state: the wrapper settles at 80vw */
+  --hero-aspect: 1279 / 960; /* reference main-image panel ratio */
+  --overlay-aspect: 835 / 557; /* reference overlay ratio */
+  --hero-drift: 15vw; /* how far the large image travels, leftward */
+  /* overlay at 6.5 of 12 columns, seated beside the main image — it never
+     overlaps it and never touches the panel's edge */
+  --overlay-w: calc(var(--col) * 6.5 + var(--grid-gap) * 5.5);
+  --overlay-inset: calc(var(--col) * 1 + var(--grid-gap));
+
+  /* Orkay palette (from orkaytiles.com brand assets) */
+  --black: #000000;
+  --ink: #25252b;
+  --white: #ffffff;
+  --bone: #f2efea;
+  --clay: #e4ddd3;
+  --red: #ed1c24;
+  --grey: #707070;
+  /* the values panel's own register — reference: the pale blue chapter */
+  --sky: #c4d4ef;
+  --umber: #3a2e20;
+
+  --100vh: 100vh;
+}
+
+@media (max-width: 1536px) {
+  :root {
+    --fsize: 1.3020833333vw;
+  }
+}
+@media (max-width: 1280px) {
+  :root {
+    --fsize: 1.5625vw;
+  }
+}
+@media (max-width: 1024px) {
+  :root {
+    --fsize: 1.953125vw;
+    --grid-gap: 1rem;
+    --wrapper-padd: 1.2rem;
+  }
+}
+@media (max-width: 950px) {
+  :root {
+    --fsize: 3.4722222222vw;
+    --grid-gap: 0.75rem;
+    --wrapper-padd: 0.75rem;
+    --intro-w: 100vw;
+  }
+}
+@media (max-width: 560px) {
+  :root {
+    --fsize: 4.2735042735vw;
+  }
+}
+
+/* ---------- reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  font-size: var(--fsize);
+  background: var(--black);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body,
+h1,
+h2,
+h3,
+p,
+figure,
+ul,
+li {
+  margin: 0;
+  padding: 0;
+}
+ul {
+  list-style: none;
+}
+body {
+  font-family: var(--f-grotesk);
+  font-weight: 300;
+  color: var(--black);
+  background: var(--white);
+  overflow-x: hidden;
+}
+img {
+  display: block;
+  max-width: 100%;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* ---------- type utilities (reference naming preserved) ---------- */
+.f-grotesk {
+  font-family: var(--f-grotesk);
+}
+.f-edit {
+  font-family: var(--f-edit);
+  font-weight: 400;
+}
+.t-upper {
+  text-transform: uppercase;
+}
+.t-title-ls {
+  letter-spacing: -0.0826446281rem;
+}
+.lh-less {
+  line-height: 0.9;
+}
+.lh-less2 {
+  line-height: 0.85;
+}
+.t-titulo-xxl {
+  font-size: var(--titulo-xxl);
+  line-height: var(--titulo-xxl-lh);
+}
+.t-titulo-xl {
+  font-size: var(--titulo-xl);
+  line-height: var(--titulo-xl-lh);
+}
+.t-titulo-l {
+  font-size: var(--titulo-l);
+  line-height: var(--titulo-l-lh);
+}
+.t-titulo {
+  font-size: var(--titulo);
+  line-height: var(--titulo-lh);
+}
+.t-supertitulo {
+  font-size: var(--supertitulo);
+  line-height: var(--supertitulo-lh);
+}
+.t-supertitulo-l {
+  font-size: var(--supertitulo-l);
+  line-height: var(--supertitulo-l-lh);
+}
+.t-parrafo-xl {
+  font-size: var(--parrafo-xl);
+  line-height: var(--parrafo-xl-lh);
+}
+.t-parrafo-l {
+  font-size: var(--parrafo-l);
+  line-height: var(--parrafo-l-lh);
+}
+.t-parrafo {
+  font-size: var(--parrafo);
+  line-height: var(--parrafo-lh);
+}
+.t-subtitulo {
+  font-size: var(--subtitulo);
+  line-height: var(--subtitulo-lh);
+}
+
+.wrapper {
+  padding-left: var(--wrapper-padd);
+  padding-right: var(--wrapper-padd);
+}
+
+.clip-y {
+  overflow: hidden;
+  display: block;
+}
+
+/* ============================================================
+   MEDIA + FLIPMEDIA
+   (reference primitives: clip-path inset via --clipPath,
+    two stacked layers, up slides out revealing down)
+   ============================================================ */
+.media {
+  --clipPath: 0% 0% 0% 0%;
+  clip-path: inset(var(--clipPath));
+}
+.media__wrap-source,
+.media__source {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.flipMedia {
+  --clipPath: 0% 0% 0% 0%;
+  clip-path: inset(var(--clipPath));
+  position: relative;
+  display: block;
+  overflow: clip;
+}
+.flipMedia__media {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+}
+.flipMedia__media .media__wrap-source,
+.flipMedia__media .media__source {
+  position: relative;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+/* incoming layers are over-tall so their parallax has somewhere to travel */
+.flipMedia.flipMedia--upDown .flipMedia__media .media__wrap-source {
+  height: 110%;
+}
+/* slide stacks paint in sequence order, so every layer but the first has to
+   be parked outside the box before GSAP takes over — otherwise the last
+   image of the sequence is what paints on load */
+.flipMedia--slideLeft .flipMedia__media:not(:first-child) {
+  transform: translateX(-100%);
+}
+.flipMedia--slideRight .flipMedia__media:not(:first-child) {
+  transform: translateX(100%);
+}
+
+/* ============================================================
+   RAIL  (reference: main .mod-scroll)
+   A horizontal flex row of full-height panels. Vertical scroll
+   is pinned and translated into horizontal movement.
+   ============================================================ */
+.rail-viewport {
+  position: relative;
+  width: 100vw;
+  overflow: clip;
+  background: var(--black);
+}
+
+main .rail {
+  position: relative;
+  width: fit-content;
+  display: flex;
+  z-index: 2;
+  background: var(--white);
+}
+main .rail > div,
+main .rail .wrapper {
+  position: relative;
+  height: var(--100vh);
+}
+main .rail > div {
+  flex: 0 0 auto;
+}
+
+/* ---------- panel 1 : editorial half, on black ----------
+   The photographic half is a bright white marble interior, so the type
+   panel carries the opposite value. Reference variant: .mod-scroll__intro
+   .bg-black.c-white */
+main .rail__intro {
+  background: var(--black);
+  color: var(--white);
+}
+main .rail__intro .wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--intro-w);
+}
+main .rail__intro__copyright {
+  position: absolute;
+  bottom: var(--wrapper-padd);
+  left: var(--wrapper-padd);
+  text-transform: uppercase;
+}
+/* reference: the section label is an edge element, vertically centred */
+main .rail__intro__section {
+  position: absolute;
+  top: 50%;
+  left: var(--wrapper-padd);
+  transform: translateY(-50%);
+}
+main .rail__intro__logo {
+  position: absolute;
+  top: var(--wrapper-padd);
+  left: var(--wrapper-padd);
+  width: 7rem;
+}
+main .rail__intro__logo img {
+  width: 100%;
+  height: auto;
+}
+
+/* vertical, edge-mounted navigation — rotated -90deg, hinged bottom-right */
+main .rail__intro__menu {
+  position: absolute;
+  top: calc(var(--wrapper-padd) - 1.15rem);
+  right: var(--wrapper-padd);
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1.2rem;
+  transform: rotate(-90deg);
+  transform-origin: bottom right;
+  z-index: 4;
+}
+main .rail__intro__menu li a {
+  position: relative;
+  display: inline-block;
+}
+main .rail__intro__menu li a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.2rem;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+main .rail__intro__menu li a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* The composition is one grid. Column 1 is `max-content`, so its width is
+   set by the longest left-margin line ("FROM WALLS") and column 2 begins
+   exactly where that line ends — that boundary IS the indent axis, at every
+   viewport, with no magic percentage to re-tune. "TO", the paragraph and
+   the meta line all live in column 2, which is what puts them on one
+   vertical. The right padding clears the rotated nav rail (its band is the
+   menu's own line-height wide, hard against the wrapper's padding edge), so
+   nothing in the column can run under it. */
+main .rail__intro__content {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+  column-gap: var(--grid-gap);
+  row-gap: 0.5rem;
+  align-content: center;
+  align-items: end;
+  width: 100%;
+  /* leaves the left edge free for the vertically-centred section label */
+  padding-left: calc(4.8rem - var(--wrapper-padd));
+  padding-right: 2.4rem;
+}
+/* the wrapper stays for the markup's sake; its children are the grid items */
+main .rail__intro__wrap-titles {
+  display: contents;
+}
+main .rail__intro__title:nth-of-type(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+main .rail__intro__title:nth-of-type(2) {
+  grid-column: 2;
+  grid-row: 2;
+}
+main .rail__intro__title:nth-of-type(3) {
+  grid-column: 1;
+  grid-row: 3;
+}
+main .rail__intro__title {
+  /* The dot in the O, in the mark's own proportions: in orkay-logo.svg it is
+     a concentric ellipse at 40% of the O's width and 44% of its height —
+     very slightly taller than wide, which is why these are two values and
+     not one. --o-dot-rise is the by-eye knob, and it wants 0: Jost's metrics
+     (ascent 1.070em, descent 0.375em — typo, hhea and win all agree — cap
+     0.700em) at line-height 0.9 put the baseline 0.7975em below the char
+     box's top, so the box centre sits 0.3475em above the baseline and the
+     cap centre 0.35em. They coincide to 1/400 em, and the O's ink is
+     symmetric about the cap centre (bbox -10..710). `top: 50%` IS the centre
+     of the letter here; any rise is just the dot riding high. */
+  --o-dot-w: 0.3em;
+  --o-dot-h: 0.33em;
+  --o-dot-rise: 0em;
+  text-transform: uppercase;
+  font-family: var(--f-geo);
+  /* the vw coefficient is what holds the composition together, not just a
+     size: column 1 is sized by this line, so too large a coefficient starves
+     the column the paragraph and meta live in. At 6.1vw the long line stays
+     near 55-60% of the content width at every desktop step, which is the
+     proportion the reference keeps. The 5.2rem cap governs from ~1700px up. */
+  font-size: min(5.2rem, 6.1vw);
+  line-height: 0.9;
+  letter-spacing: -0.0826446281rem;
+  font-weight: 300;
+  /* the max-content column is only meaningful if the line cannot wrap */
+  white-space: nowrap;
+}
+/* The dot lands on the two left-margin lines — the O of "FROM" and the O of
+   "BEYOND" — and not on the indented "TO" between them. Each of those words
+   holds exactly one O, so this is two dots, bracketing the statement. The
+   char spans are built by splitChars, which stamps each with its letter. */
+main .rail__intro__title:nth-of-type(1) .char[data-char="O"],
+main .rail__intro__title:nth-of-type(3) .char[data-char="O"] {
+  position: relative;
+}
+main .rail__intro__title:nth-of-type(1) .char[data-char="O"]::after,
+main .rail__intro__title:nth-of-type(3) .char[data-char="O"]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, calc(-50% - var(--o-dot-rise)));
+  width: var(--o-dot-w);
+  height: var(--o-dot-h);
+  border-radius: 50%;
+  background: var(--red);
+  /* the dot belongs to the letter — it rides the char's reveal transform */
+  pointer-events: none;
+}
+/* The paragraph gets its own row rather than sharing row 3 with "BEYOND".
+   Sharing it meant any space added above the paragraph grew the row and
+   dragged BEYOND down with it, loosening the three title lines. On its own
+   row the title keeps its tight rhythm and --intro-gap moves only the
+   paragraph — that is the one knob for the air under "TO". */
+main .rail__intro__text {
+  --intro-gap: 2.6rem;
+  grid-column: 2;
+  grid-row: 4;
+  margin-top: var(--intro-gap);
+  max-width: 17rem;
+  font-size: var(--parrafo);
+  line-height: var(--parrafo-lh);
+}
+main .rail__intro__text p + p {
+  margin-top: 0.9rem;
+}
+main .rail__intro__meta {
+  grid-column: 2;
+  grid-row: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  margin-top: 1.4rem;
+  text-transform: uppercase;
+}
+
+/* ---------- panel 2 : the large image + the overlay ---------- */
+/* reference verbatim: padding-right = 1 col + 1 gap */
+main .rail__images {
+  position: relative;
+  /* room for the half of the overlay that protrudes past the image,
+     plus a gap on either side of it */
+  padding-right: calc(var(--overlay-w) / 2 + var(--grid-gap) * 2);
+  overflow: clip;
+  background: var(--white);
+}
+main .rail__images__image-single {
+  position: relative;
+  aspect-ratio: var(--hero-aspect);
+  height: var(--100vh);
+  overflow: clip;
+}
+/* over-wide by the full parallax distance, so drifting left never exposes
+   the panel behind it */
+main .rail__images__image-single .media__wrap-source {
+  position: relative;
+  height: 100%;
+  width: calc(100% + var(--hero-drift));
+}
+main .rail__images__image-single .media__source {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+/* overlay sits vertically centred, straddling the large image's right
+   edge — half over the photograph, half on the panel (reference: the
+   collage layers, images overlapping) */
+main .rail__images.principal .flipMedia {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--grid-gap) * 2);
+  transform: translateY(-50%);
+  width: var(--overlay-w);
+  height: auto;
+  aspect-ratio: var(--overlay-aspect);
+  z-index: 3;
+}
+main .rail__images__caption {
+  position: absolute;
+  right: calc(var(--grid-gap) * 2);
+  top: calc(50% + var(--overlay-w) / (835 / 557) / 2 + 1.15rem);
+  width: var(--overlay-w);
+  height: 1.2rem;
+  color: var(--ink);
+  text-transform: uppercase;
+  z-index: 3;
+}
+/* both captions occupy the same slot and cross-fade with the material */
+main .rail__images__caption span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  white-space: nowrap;
+}
+
+/* ---------- panel 3 : editorial statement ---------- */
+main .rail__text {
+  background: var(--white);
+}
+main .rail__text .wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: calc(var(--col) * 9 + var(--grid-gap) * 8 + var(--wrapper-padd) * 2);
+}
+/* the label rides the title block as an eyebrow. Centred at the panel edge
+   it left a dead column beside the right-aligned middle line. */
+main .rail__text__section {
+  margin-bottom: 1.4rem;
+}
+main .rail__text__wrap-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+main .rail__text__title {
+  font-size: min(var(--supertitulo), 7.6vw);
+  line-height: 0.9;
+  font-weight: 300;
+}
+main .rail__text__title__line {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: -0.0826446281rem;
+  white-space: nowrap;
+}
+main .rail__text__title__line.t-right {
+  text-align: right;
+}
+main .rail__text__title em {
+  font-family: var(--f-edit);
+  font-style: italic;
+  font-weight: 400;
+}
+main .rail__text__text {
+  align-self: flex-end;
+  max-width: 20rem;
+  font-size: var(--parrafo);
+  line-height: var(--parrafo-lh);
+}
+
+/* ---------- panel 4 : black material panel ---------- */
+main .rail__images-text {
+  background: var(--black);
+  color: var(--white);
+}
+main .rail__images-text .wrapper {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  /* the stack's large image is full-bleed: it must sit flush against the
+     white panel before it, or the black reads as a gap */
+  padding-left: 0;
+  padding-right: var(--wrapper-padd);
+}
+/* the two images are one composition: the large one owns the full viewport
+   height, the small one straddles its right edge at 70% of it, vertically
+   centred and OVERLAPPING it (reference style: the collage layers) */
+main .rail__images-text__stack {
+  position: relative;
+  flex: 0 0 auto;
+  height: 100%;
+  /* clears the small image straddling its edge so the copy never sits
+     under it: the half of its width that protrudes + a gap on each side */
+  margin-right: calc(var(--100vh) * 0.7 * 835 / 557 / 2 + var(--grid-gap) * 2);
+}
+main .rail__images-text__stack .flipMedia--slideLeft {
+  height: 100%;
+  aspect-ratio: 944/756;
+}
+/* broader than the reference's 441/451 — landscape, like the hero overlay */
+main .rail__images-text__stack .flipMedia--slideRight {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 70%;
+  aspect-ratio: var(--overlay-aspect);
+  z-index: 3;
+}
+main .rail__images-text__text {
+  width: calc(var(--col) * 5 + var(--grid-gap) * 4);
+  padding: 0 var(--wrapper-padd);
+  align-self: center;
+  font-size: var(--titulo-xl);
+  line-height: var(--titulo-xl-lh);
+  font-family: var(--f-edit);
+  font-weight: 400;
+}
+main .rail__images-text__text em {
+  font-style: italic;
+}
+
+/* ---------- two overlapping images, no text ----------
+   reference verbatim: .mod-scroll__images.secundario */
+main .rail__images.secundario {
+  padding-right: calc(var(--col) * 2 + var(--grid-gap) * 3);
+  background: var(--bone);
+}
+main .rail__images.secundario .flipMedia:nth-of-type(1) {
+  height: 100%;
+  aspect-ratio: 1090/960;
+}
+main .rail__images.secundario .flipMedia:nth-of-type(2) {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--col) * 1 + var(--grid-gap));
+  transform: translateY(-50%);
+  width: calc(var(--col) * 5.2 + var(--grid-gap) * 4.2);
+  height: auto;
+  aspect-ratio: 668/554;
+  z-index: 3;
+}
+
+/* ---------- vertical word strip (reference: .mod-scroll__carousel) ---------- */
+main .rail__carousel {
+  position: relative;
+  width: 1.5em;
+  background: var(--black);
+  z-index: 10;
+}
+main .rail__carousel__content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1.5em;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 2.5rem;
+  transform: translateY(var(--100vh)) rotate(-90deg);
+  transform-origin: top left;
+  background: var(--clay);
+}
+main .rail__carousel__content span {
+  position: relative;
+  display: flex;
+  width: max-content;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 2.5rem;
+  padding: 0.2em 0;
+}
+main .rail__carousel__text {
+  white-space: nowrap;
+}
+main .rail__carousel__image {
+  position: relative;
+  display: block;
+  width: 0.75em;
+}
+
+/* ---------- panel : the three values ----------
+   Three numbered rows at supertitulo scale, each wider than the viewport.
+   The panel is over-wide so the rows have room to cross without the
+   composition ever showing an edge. */
+main .rail__values {
+  position: relative;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--wrapper-padd);
+  /* the words may poke past the panel while their rows track */
+  overflow: unset;
+  background: var(--sky);
+  color: var(--umber);
+}
+main .rail__values__row {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-wrap: nowrap;
+  align-items: center;
+  white-space: nowrap;
+}
+main .rail__values__wrap-title {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  width: 100%;
+}
+/* the last row sits one column in, set tighter — reference values */
+main .rail__values__row:last-of-type {
+  margin-left: calc(var(--col) * 1 + var(--grid-gap));
+  padding-bottom: calc(var(--wrapper-padd) / 2);
+}
+/* reference: the third term switches to the geometric sans (f-izmir) —
+   our equivalent face is the geo already loaded for the hero statement */
+main .rail__values__row:last-of-type .rail__values__word {
+  line-height: 0.65;
+  font-family: var(--f-geo);
+  font-weight: 300;
+}
+/* the knockout: blend-difference over an inverted filter over black ink —
+   wherever a letter crosses the follow image, it inverts */
+main .rail__values__word {
+  position: relative;
+  mix-blend-mode: difference;
+  z-index: 20;
+  line-height: 0.85;
+  font-weight: 400;
+}
+main .rail__values__word__filter {
+  filter: invert(100%);
+}
+main .rail__values__word__color {
+  color: black;
+}
+/* reference verbatim (mod-scroll__terms__term__text): the paragraph is a
+   fixed-width column IN the row's flex flow — one column in from the left,
+   1.4 columns of clearance before the number — so the title starts after
+   it and the two can never overlap */
+main .rail__values__intro {
+  position: relative;
+  width: calc(var(--col) * 2.03 + var(--grid-gap) * 1.03 + var(--grid-gap));
+  min-width: calc(var(--col) * 2.03 + var(--grid-gap) * 1.03 + var(--grid-gap));
+  margin: 0 calc(var(--col) * 1.4 + var(--grid-gap) * 0.4 + var(--grid-gap)) 0
+    calc(var(--col) * 1 + var(--grid-gap));
+  white-space: normal;
+}
+
+/* the image on the pointer — under the words (z 10 vs z 20), square.
+   Layers swap on row hover via .on / .prev. */
+.values-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 18em; /* reference: 18em desktop */
+  aspect-ratio: 1/1;
+  z-index: 10;
+  overflow: clip;
+  transform-origin: bottom center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.values-cursor > img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  z-index: 1;
+  --clipPath: 0% 0% 0% 0%;
+  clip-path: inset(var(--clipPath));
+}
+.values-cursor > img.on {
+  z-index: 3;
+}
+.values-cursor > img.prev {
+  z-index: 2;
+}
+
+/* ---------- the filmstrip : six chapters as expanding cards ----------
+   The section reserves its FINAL width up front (intro + 6 open cards), so
+   the rail never changes size while a card grows — every trigger measured
+   at rest stays exact. Cards start at 15vw and open to 60vw inside the
+   reserve, pushing their siblings outward as they grow (Hero.tsx). */
+main .rail__strip {
+  display: flex;
+  background: var(--white);
+}
+main .rail__strip__intro {
+  flex: 0 0 auto;
+  width: calc(var(--col) * 3 + var(--grid-gap) * 2 + var(--wrapper-padd) * 2);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.9rem;
+  padding: var(--wrapper-padd);
+}
+main .rail__strip__text {
+  max-width: 13rem;
+  font-size: var(--parrafo);
+  line-height: var(--parrafo-lh);
+}
+main .rail__strip__cards {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: nowrap;
+  width: calc(60vw * 5); /* 5 expanding cards, fully open — the sixth is
+                            the handoff anchor, in its own frame */
+  height: 100%;
+}
+.strip-card {
+  position: relative;
+  overflow: hidden;
+  width: 15vw; /* rest state — GSAP opens it to 60vw */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--bone);
+  color: var(--ink);
+  will-change: width;
+}
+.strip-card:nth-of-type(3n + 2) {
+  background: var(--clay);
+}
+.strip-card:nth-of-type(3n) {
+  background: var(--sky);
+}
+/* widening the card while shortening the image widens the crop window and
+   un-zooms the photo at once — a mask opening outward, never a scale */
+.strip-card__media {
+  height: 87vh; /* rest state — shortens to 66.66vh as the card opens */
+  overflow: hidden;
+  will-change: height;
+}
+.strip-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  will-change: transform, width, height;
+}
+.strip-card__panel {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.strip-card__title {
+  white-space: nowrap;
+  overflow: hidden; /* the mask for the char reveal */
+  text-transform: uppercase;
+  font-size: min(var(--titulo-xxl), 3.6vw);
+  line-height: 1.05;
+  font-weight: 300;
+  letter-spacing: -0.03rem;
+}
+/* the four corner items — each a slide-up mask around its content */
+.strip-card__meta {
+  position: absolute;
+  overflow: hidden;
+  text-transform: uppercase;
+  font-size: var(--subtitulo);
+  line-height: var(--subtitulo-lh);
+}
+.strip-card__meta > * {
+  display: inline-block;
+}
+.strip-card__meta--tl {
+  top: var(--wrapper-padd);
+  left: var(--wrapper-padd);
+}
+.strip-card__meta--tr {
+  top: var(--wrapper-padd);
+  right: var(--wrapper-padd);
+}
+.strip-card__meta--bl {
+  bottom: var(--wrapper-padd);
+  left: var(--wrapper-padd);
+  font-family: var(--f-edit);
+}
+.strip-card__meta--br {
+  bottom: var(--wrapper-padd);
+  right: var(--wrapper-padd);
+}
+.strip-card__cta {
+  display: inline-block;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.45em 1.1em;
+}
+
+/* ---------- the handoff : horizontal in, vertical out ----------
+   A flex pair that always sums to 100vw. Both column widths are tweened in
+   lockstep, so the frame never changes layout width and nothing after it
+   shifts while the sequence runs. */
+main .rail__handoff {
+  display: flex;
+  background: var(--white);
+  /* the frame is counter-translated RIGHT, onto the territory of the .pin
+     spacer that follows it in the DOM — without a stacking lift, the later
+     sibling paints over it as a white wall sweeping across the freeze */
+  z-index: 3;
+}
+main .rail__handoff .strip-card {
+  width: 60vw; /* the row's open width — GSAP narrows it to 42.5vw */
+}
+main .rail__handoff__inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  will-change: transform;
+}
+main .rail__handoff .strip-card__media {
+  flex: 0 0 auto;
+  height: 66.66vh; /* already at the open-state crop */
+}
+main .rail__handoff__carousel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 3;
+  transform: translateY(100vh); /* parked below until the scrub lifts it */
+  will-change: transform;
+}
+main .rail__handoff__item {
+  position: relative;
+  width: 100%;
+  height: 33.33vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+main .rail__handoff__item img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+main .rail__handoff__item--link {
+  height: 25vh;
+  background: var(--black);
+  color: var(--white);
+}
+main .rail__handoff__view {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  font-size: var(--parrafo-l);
+  letter-spacing: 0.04em;
+}
+main .rail__handoff__view svg {
+  width: 1.1em;
+  height: 1.1em;
+}
+main .rail__handoff__panel {
+  position: relative;
+  width: 40vw;
+  height: 100%;
+  background: var(--white);
+  overflow: clip;
+  display: flex;
+  justify-content: flex-end; /* right edge is static while the width grows */
+}
+main .rail__handoff__wrap {
+  position: relative;
+  flex: 0 0 auto;
+  width: 57.5vw; /* the final panel width — fixed, so the type never reflows */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* half a column of indent, not a full one: the statement is set at the
+     same size as the other panels' and needs the width to stay on one line.
+     The top padding is what keeps the centred block clear of the label. */
+  padding: calc(var(--wrapper-padd) * 4) calc(var(--col) * 0.5 + var(--wrapper-padd));
+}
+main .rail__handoff__label {
+  position: absolute;
+  top: calc(var(--wrapper-padd) + 0.4rem);
+  overflow: hidden;
+}
+main .rail__handoff__label > span {
+  display: inline-block;
+}
+/* the statement register, shared with .rail__text__title and .outro__title:
+   uppercase grotesk light, tight tracking, one italic serif accent. The size
+   is capped in vw, not rem: the panel is a fixed 57.5vw, and the lines are
+   split into inline-block chars — without the cap and the nowrap below they
+   break mid-word ("MORB / I") and run past the panel edge. */
+main .rail__handoff__title {
+  font-size: min(var(--supertitulo), 5.5vw);
+  line-height: 0.9;
+  font-weight: 300;
+}
+main .rail__handoff__line {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: -0.0826446281rem;
+  white-space: nowrap;
+}
+main .rail__handoff__line.t-right {
+  text-align: right;
+}
+main .rail__handoff__title em {
+  font-family: var(--f-edit);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+main .rail__handoff__par {
+  margin-top: 2.4rem;
+  align-self: flex-end;
+  font-size: var(--parrafo);
+  line-height: var(--parrafo-lh);
+}
+main .rail__handoff__par .clip-y > span {
+  display: block;
+  white-space: nowrap;
+}
+
+/* the spacer that buys the frozen beat its horizontal distance — must
+   equal the handoff trigger's "+=100%" span so the closing panel arrives
+   flush the moment the frame releases */
+main .rail__pin {
+  width: 100vw;
+  background: var(--white);
+}
+
+/* ---------- closing panel ----------
+   reference verbatim (mod-scroll__cierre): 150vw of red; the content is one
+   full viewport, grid-centred image. Hero.tsx counter-translates the content
+   right over the extra 50vw of travel, so it holds still on screen. */
+main .rail__cierre {
+  width: 150vw;
+  background: var(--red);
+  color: var(--white);
+  z-index: 3;
+}
+main .rail__cierre__content {
+  position: relative;
+  width: 100vw;
+  height: var(--100vh);
+  display: grid;
+  place-items: center;
+}
+main .rail__cierre__head {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: var(--wrapper-padd);
+  display: flex;
+  justify-content: space-between;
+}
+/* reference: 8 of 12 columns, capped at 90%, fixed landscape ratio */
+main .rail__cierre__image {
+  position: relative;
+  width: calc((99.9vw - var(--wrapper-padd) * 2 - var(--grid-gap) * 11) / 12 * 8 + var(--grid-gap) * 7);
+  max-width: 90%;
+  aspect-ratio: 1226/689;
+}
+main .rail__cierre__title {
+  position: absolute;
+  left: var(--wrapper-padd);
+  bottom: var(--wrapper-padd);
+  font-size: min(var(--supertitulo), 7.6vw);
+  line-height: 0.85;
+  text-transform: uppercase;
+  letter-spacing: -0.0826446281rem;
+  font-weight: 300;
+}
+main .rail__cierre__title em {
+  font-family: var(--f-edit);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* ---------- scroll indicator ---------- */
+.scroll-indicator {
+  position: fixed;
+  left: calc(var(--intro-w) / 2);
+  bottom: calc(var(--wrapper-padd) * 1.1);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-transform: uppercase;
+  color: var(--ink);
+  z-index: 20;
+  mix-blend-mode: difference;
+  filter: invert(1);
+  pointer-events: none;
+}
+.scroll-indicator__rule {
+  display: block;
+  width: 3.6rem;
+  height: 1px;
+  background: currentColor;
+  transform-origin: left;
+}
+
+/* ---------- fixed header ---------- */
+.header {
+  position: fixed;
+  top: var(--wrapper-padd);
+  left: var(--wrapper-padd);
+  z-index: 30;
+}
+.header__logo {
+  position: relative;
+  display: block;
+  width: 7rem;
+}
+.header__logo img {
+  width: 100%;
+  height: auto;
+}
+/* the white mark is stacked on top and cross-faded over dark panels */
+.header__logo img + img {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+/* sits over the photographic half, whose value changes as the rail travels —
+   difference blending keeps it legible on any panel without scripting */
+.header__contact {
+  position: fixed;
+  top: var(--wrapper-padd);
+  right: var(--wrapper-padd);
+  z-index: 30;
+  text-transform: uppercase;
+  color: var(--white);
+  mix-blend-mode: difference;
+}
+
+/* ============================================================
+   AFTER THE PIN
+   ============================================================ */
+/* ---------- the statement panel ----------
+   One viewport, one sentence. The type is sized off the viewport rather
+   than --fsize so both lines stay near the full measure at any width, as
+   in the reference. */
+.statement {
+  position: relative;
+  z-index: 2;
+  min-height: var(--100vh);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--wrapper-padd);
+  background: var(--bone);
+  color: var(--ink);
+  overflow: clip;
+}
+.statement__contact {
+  position: absolute;
+  top: var(--wrapper-padd);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--parrafo-l);
+  line-height: var(--parrafo-l-lh);
+  color: inherit;
+  text-decoration: none;
+}
+.statement__title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-size: 11.2vw;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+/* the second half of the wordmark, inverted in the corner — the mark the
+   fixed header has already faded out by this point */
+.statement__mark {
+  position: absolute;
+  right: var(--wrapper-padd);
+  bottom: var(--wrapper-padd);
+  transform: rotate(180deg);
+  font-size: var(--titulo-l);
+  line-height: 0.8;
+}
+
+/* ---------- the pair ----------
+   Reference geometry: 6 columns for the large image, 4 for the small one,
+   both top-aligned, the last two columns left as cream. */
+.showcase {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--grid-gap);
+  padding: 2.5rem var(--wrapper-padd) 7rem;
+  background: var(--bone);
+}
+.showcase figure {
+  overflow: clip;
+}
+.showcase figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+/* six columns each, one gap between: the pair spans the full measure, so no
+   dead column is left at the right edge */
+.showcase__large {
+  flex: 0 0 calc(var(--col) * 6 + var(--grid-gap) * 5);
+  aspect-ratio: 1 / 1;
+}
+.showcase__small {
+  flex: 0 0 calc(var(--col) * 6 + var(--grid-gap) * 5);
+  aspect-ratio: 16 / 9;
+}
+
+/* ---------- the pitch ---------- */
+.pitch {
+  position: relative;
+  z-index: 2;
+  padding: 2rem var(--wrapper-padd) 9rem;
+  background: var(--bone);
+  color: var(--ink);
+}
+.pitch__title {
+  display: flex;
+  flex-direction: column;
+  font-size: 8.6vw;
+  line-height: 0.9;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+/* the third line breaks the block: right axis, and dropped by half a line */
+.pitch__title .t-right {
+  text-align: right;
+  margin-top: 0.3em;
+}
+/* the right half of the measure, marked by a single dot in the margin */
+.pitch__body {
+  position: relative;
+  width: calc(var(--col) * 6 + var(--grid-gap) * 5);
+  margin: 6rem 0 0 auto;
+  font-size: var(--parrafo-xl);
+  line-height: var(--parrafo-xl-lh);
+}
+.pitch__body::before {
+  content: "";
+  position: absolute;
+  left: -1.4rem;
+  top: 0.6em;
+  width: 0.42rem;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: var(--red);
+}
+.pitch__contact {
+  margin-top: 1.85rem;
+}
+.pitch__cta {
+  display: block;
+  width: max-content;
+  margin: 6.5rem auto 0;
+  padding: 0.85em 2.7em;
+  border-radius: 999px;
+  background: var(--black);
+  color: var(--white);
+  font-size: var(--titulo);
+  line-height: var(--titulo-lh);
+}
+
+/* ---------- the wordmark ----------
+   Reference: the normalisboring.es footer "BORING", elongating on scroll.
+   Geometry of the slice trick lives here; the motion is BrandStretch.tsx.
+   The bottom padding reserves the R's full travel, so the elongation never
+   moves the layout under it. */
+.brand {
+  /* sized with slack: the viewport-relative unit includes the scrollbar,
+     the flex row does not — too tight a fit crops the Y */
+  --brand-size: 19.5vw;
+  /* the R's full travel (R_FINAL in BrandStretch.tsx) plus a hair of slack —
+     the padding is the room the elongation drops into */
+  --brand-drop: calc(var(--brand-size) * 2.3);
+  /* room under the image for its name and note. It is added to BOTH the
+     section's bottom padding and the figure's bottom offset, so the image's
+     bottom edge stays on the R's foot however tall the caption gets. */
+  --brand-caption: 9rem;
+  position: relative;
+  z-index: 2;
+  overflow: clip;
+  padding: 3rem var(--wrapper-padd)
+    calc(var(--brand-drop) + var(--brand-caption));
+  background: var(--bone);
+  color: var(--ink);
+}
+/* the contact row above the word — reference: serif, centred, a hairline
+   rule between the two links */
+.brand__links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 4rem;
+  font-size: var(--titulo-l);
+  line-height: var(--titulo-l-lh);
+}
+.brand__links span {
+  font-weight: 300;
+  opacity: 0.45;
+}
+.brand__links a {
+  position: relative;
+}
+.brand__links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.12em;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.brand__links a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.brand__word {
+  display: flex;
+  justify-content: space-between;
+  /* the reference's register: ultra-bold high-contrast serif, near-black */
+  font-family: var(--font-brand), "Playfair Display", "Didot", serif;
+  font-weight: 900;
+  color: var(--black);
+  font-size: var(--brand-size);
+  line-height: 1;
+}
+.brand__letter {
+  position: relative;
+  display: inline-block;
+}
+.brand__ghost {
+  visibility: hidden;
+}
+.brand__part {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.brand__part--top {
+  clip-path: inset(0 0 calc(100% - var(--cut)) 0);
+}
+/* the band is cut ± 0.5% — SLICE in BrandStretch.tsx */
+.brand__part--mid {
+  clip-path: inset(calc(var(--cut) - 0.5%) 0 calc(100% - var(--cut) - 0.5%) 0);
+  will-change: transform;
+}
+.brand__part--bot {
+  clip-path: inset(var(--cut) 0 0 0);
+  will-change: transform;
+}
+/* reference: the project image beside the stretched letters. Its bottom
+   offset puts it on the R's final baseline: the R overshoots the line box
+   bottom padding slack (0.1) plus the font's descender band (~0.13em) that
+   sits under the caps. Parked fully clipped; the timeline wipes it in. */
+.brand__figure {
+  position: absolute;
+  right: var(--wrapper-padd);
+  bottom: calc(var(--brand-size) * 0.23 + var(--brand-caption));
+  width: calc(var(--col) * 5 + var(--grid-gap) * 4);
+  aspect-ratio: 3 / 2;
+  text-align: center;
+}
+/* only the picture is clipped — the label and caption hang outside the
+   figure's box, so neither one can shift the image off the R's foot */
+.brand__figure__media {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  clip-path: inset(100% 0 0 0);
+}
+.brand__figure__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+.brand__figure__label {
+  position: absolute;
+  bottom: calc(100% + 1.5rem);
+  left: 0;
+  width: 100%;
+  font-size: var(--parrafo-l);
+  line-height: var(--parrafo-l-lh);
+}
+.brand__figure__caption {
+  position: absolute;
+  top: calc(100% + 2.1rem);
+  left: 0;
+  width: 100%;
+}
+.brand__figure__title {
+  display: block;
+  font-size: var(--titulo-l);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+.brand__figure__note {
+  display: block;
+  margin-top: 0.9rem;
+  font-size: var(--parrafo-l);
+  line-height: var(--parrafo-l-lh);
+}
+
+.outro {
+  position: relative;
+  z-index: 2;
+  background: var(--black);
+  color: var(--white);
+  padding: 6rem var(--wrapper-padd) 2rem;
+}
+.outro__title {
+  font-size: min(var(--supertitulo), 7.6vw);
+  line-height: 0.88;
+  text-transform: uppercase;
+  letter-spacing: -0.0826446281rem;
+  font-weight: 300;
+  max-width: 24ch;
+}
+.outro__title em {
+  font-family: var(--f-edit);
+  font-style: italic;
+  font-weight: 400;
+}
+.outro__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--grid-gap);
+  margin-top: 6rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+.outro__grid h3 {
+  text-transform: uppercase;
+  font-size: var(--subtitulo);
+  line-height: var(--subtitulo-lh);
+  font-weight: 400;
+  opacity: 0.55;
+  margin-bottom: 0.7rem;
+}
+.outro__grid p,
+.outro__grid a {
+  font-size: var(--parrafo);
+  line-height: var(--parrafo-lh);
+}
+.outro__foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5rem;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+/* ============================================================
+   MOBILE  — the rail unrolls vertically, but the editorial
+   language (scale, overlap, layering, flip) is preserved.
+   ============================================================ */
+@media (max-width: 950px) {
+  main .rail {
+    display: block;
+    width: 100%;
+  }
+  main .rail > div,
+  main .rail .wrapper {
+    height: auto;
+  }
+  main .rail__intro .wrapper {
+    width: 100%;
+    min-height: var(--100vh);
+    padding-top: 5rem;
+    padding-bottom: 3rem;
+  }
+  main .rail__intro__menu,
+  main .rail__intro__section {
+    display: none;
+  }
+  /* one column: the stagger survives as an indent on the middle line, and
+     nothing has a nav rail to avoid — it is hidden at this width */
+  main .rail__intro__content {
+    grid-template-columns: minmax(0, 1fr);
+    padding-left: 0;
+    padding-right: 0;
+  }
+  main .rail__intro__title {
+    font-size: 3.1rem;
+    white-space: normal;
+  }
+  main .rail__intro__title:nth-of-type(1),
+  main .rail__intro__title:nth-of-type(2),
+  main .rail__intro__title:nth-of-type(3),
+  main .rail__intro__text,
+  main .rail__intro__meta {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  main .rail__intro__title:nth-of-type(2) {
+    margin-left: 14%;
+  }
+  main .rail__intro__text {
+    max-width: 100%;
+    width: 100%;
+    margin-top: 1.6rem;
+  }
+
+  main .rail__images {
+    padding-right: 0;
+    padding-bottom: 5.5rem;
+  }
+  main .rail__images__image-single {
+    aspect-ratio: 375/281;
+    height: auto;
+    width: 100%;
+  }
+  /* reference mobile geometry: the overlay hangs below the main image,
+     2.5 of 4 columns wide, still overlapping it */
+  main .rail__images.principal .flipMedia {
+    top: auto;
+    bottom: 1.75rem;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    width: calc(
+      (99.9vw - var(--wrapper-padd) * 2 - var(--grid-gap) * 3) / 4 * 2.5 +
+        var(--grid-gap) * 1.5
+    );
+  }
+  main .rail__images__caption {
+    display: none;
+  }
+  /* reference mobile geometry for the two-image panel */
+  main .rail__images.secundario {
+    padding-bottom: 5rem;
+  }
+  main .rail__images.secundario .flipMedia:nth-of-type(1) {
+    aspect-ratio: 375/281;
+    height: auto;
+    width: 100%;
+  }
+  main .rail__images.secundario .flipMedia:nth-of-type(2) {
+    top: auto;
+    right: auto;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    width: calc(
+      (99.9vw - var(--wrapper-padd) * 2 - var(--grid-gap) * 3) / 4 * 2.5 +
+        var(--grid-gap) * 1.5
+    );
+  }
+
+  main .rail__text .wrapper,
+  main .rail__cierre,
+  main .rail__strip {
+    width: 100%;
+  }
+  main .rail__text .wrapper {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+  main .rail__text__title {
+    font-size: 2.6rem;
+    line-height: 0.95;
+  }
+  main .rail__text__title__line {
+    white-space: normal;
+  }
+  main .rail__text__text {
+    max-width: 100%;
+  }
+
+  /* the strip lies flat again once the rail is vertical */
+  main .rail__carousel {
+    width: 100%;
+    height: 1.5em !important;
+  }
+  main .rail__carousel__content {
+    font-size: 3.7rem;
+    gap: 1rem;
+    transform: none;
+    transform-origin: unset;
+  }
+  main .rail__carousel__content span {
+    gap: 1rem;
+    padding: 0.6em 0;
+  }
+
+  /* the values panel narrows to the column; the pointer image has no
+     pointer to ride, so it never shows */
+  /* values — reference mobile: static stacked rows, big hyphenating words */
+  main .rail__values {
+    width: 100%;
+    height: auto;
+    padding: 4rem 0;
+    gap: 2.75rem;
+    justify-content: flex-start;
+  }
+  main .rail__values__row {
+    padding: var(--wrapper-padd);
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  main .rail__values__word {
+    margin-bottom: 1.1rem;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    width: 90vw;
+    white-space: normal;
+  }
+  main .rail__values__row:last-of-type {
+    margin-left: 0;
+  }
+  main .rail__values__row:last-of-type .rail__values__word {
+    line-height: 0.85;
+    margin-top: -0.05em;
+  }
+  /* reference mobile: title first, text under it, near full width */
+  main .rail__values__intro {
+    width: calc(100% - 2rem);
+    min-width: unset;
+    margin: 0 0 0 1rem;
+    order: 2;
+  }
+  .values-cursor {
+    display: none;
+  }
+
+  main .rail__images-text .wrapper {
+    flex-direction: column;
+    padding: 2.4rem var(--wrapper-padd);
+  }
+  main .rail__images-text__stack {
+    width: 100%;
+    height: auto;
+    margin: 0 0 4rem;
+  }
+  main .rail__images-text__stack .flipMedia--slideLeft {
+    width: 100%;
+    height: auto;
+  }
+  main .rail__images-text__stack .flipMedia--slideRight {
+    position: absolute;
+    right: 0;
+    bottom: -3rem;
+    width: 55%;
+    height: auto;
+  }
+  main .rail__images-text__text {
+    width: 100%;
+    padding: 2.4rem 0;
+    font-size: 1.6rem;
+    line-height: 1.15;
+  }
+
+  /* the filmstrip stacks vertically — each card a full-viewport curtain */
+  main .rail__strip {
+    flex-direction: column;
+  }
+  main .rail__strip__intro {
+    width: 100%;
+    padding: 4rem var(--wrapper-padd) 2rem;
+  }
+  main .rail__strip__cards {
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+  }
+  .strip-card {
+    width: 100%;
+    height: auto;
+  }
+  .strip-card__media {
+    height: 62svh;
+  }
+  .strip-card__panel {
+    flex: 0 0 auto;
+    height: 38svh;
+  }
+
+  /* the handoff stacks: card, then the carousel in flow, then the panel */
+  main .rail__handoff {
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+  }
+  main .rail__handoff .strip-card {
+    width: 100%;
+  }
+  main .rail__handoff .strip-card__media {
+    height: 62svh;
+  }
+  main .rail__handoff__inner {
+    height: auto;
+  }
+  main .rail__handoff__carousel {
+    position: relative;
+    transform: none;
+    z-index: auto;
+  }
+  main .rail__handoff__item {
+    height: 40vh;
+  }
+  main .rail__handoff__item img {
+    height: 140%; /* headroom for the scrubbed parallax settle */
+    bottom: auto;
+  }
+  main .rail__handoff__item--link {
+    height: 25vh;
+  }
+  main .rail__handoff__panel {
+    width: 100%;
+    height: auto;
+    justify-content: flex-start;
+  }
+  main .rail__handoff__wrap {
+    width: 100%;
+    height: auto;
+    padding: 4.5rem var(--wrapper-padd) 5rem;
+  }
+  main .rail__handoff__label {
+    position: relative;
+    top: auto;
+    align-self: center;
+    margin-bottom: 2.2rem;
+  }
+  main .rail__handoff__title {
+    /* the vw cap governs here too — the lines are nowrap and the panel is
+       full-bleed, so the longest one sets the ceiling */
+    font-size: min(3.1rem, 9.2vw);
+  }
+  main .rail__handoff__line.t-right {
+    text-align: left; /* one column on mobile — the stagger has nothing to sit against */
+  }
+  main .rail__handoff__par {
+    margin-top: 2rem;
+    align-self: flex-start;
+  }
+  main .rail__pin {
+    display: none;
+  }
+
+  /* mobile: the frame unrolls in flow — head, image, title stacked */
+  main .rail__cierre__content {
+    width: 100%;
+    height: auto;
+    min-height: var(--100vh);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5rem var(--wrapper-padd) var(--wrapper-padd);
+  }
+  main .rail__cierre__head {
+    position: static;
+    padding: 0;
+  }
+  main .rail__cierre__image {
+    width: 100%;
+    max-width: unset;
+    aspect-ratio: 4/3;
+    margin: 1.5rem 0;
+  }
+  main .rail__cierre__title {
+    position: static;
+    font-size: 2.8rem;
+  }
+
+  /* the pair stacks; the small image keeps its overlap by hanging right */
+  .showcase {
+    flex-direction: column;
+    padding-bottom: 4rem;
+  }
+  .showcase__large,
+  .showcase__small {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+  .showcase__small {
+    width: 70%;
+    align-self: flex-end;
+    margin-top: -3rem;
+  }
+
+  .pitch {
+    padding-bottom: 5rem;
+  }
+  .pitch__title {
+    font-size: 2.8rem;
+  }
+  .pitch__title .t-right {
+    text-align: left; /* one column — the stagger has nothing to sit against */
+  }
+  .pitch__body {
+    width: 100%;
+    margin-top: 3rem;
+    padding-left: 1.4rem;
+    font-size: var(--parrafo-l);
+    line-height: var(--parrafo-l-lh);
+  }
+  .pitch__body::before {
+    left: 0;
+  }
+  .pitch__cta {
+    margin-top: 3.5rem;
+    font-size: var(--parrafo-xl);
+  }
+
+  .brand__links {
+    flex-wrap: wrap;
+    gap: 0.4rem 0.8rem;
+    margin-bottom: 2.5rem;
+    font-size: var(--parrafo-xl);
+    line-height: var(--parrafo-xl-lh);
+  }
+  .brand {
+    --brand-caption: 6rem;
+  }
+  .brand__figure {
+    width: 62vw;
+  }
+  .brand__figure__title {
+    font-size: var(--titulo);
+  }
+  .brand__figure__label,
+  .brand__figure__note {
+    font-size: var(--parrafo);
+    line-height: var(--parrafo-lh);
+  }
+
+  .outro__grid {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 2rem;
+  }
+  .outro__title {
+    font-size: 2.6rem;
+  }
+  .scroll-indicator {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

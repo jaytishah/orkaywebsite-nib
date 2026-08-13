@@ -1,0 +1,130 @@
+/**
+ * Every string here is Orkay's own, taken from orkaytiles.com.
+ * No invented statistics, certifications, awards or export numbers.
+ */
+
+export const BRAND = {
+  name: "Orkay Tiles",
+  tagline: "From Walls to Beyond",
+  since: "Since 1996",
+  place: "Morbi · Gujarat · India",
+  madeIn: "Made in India, Since 1996",
+} as const;
+
+export const CONTACT = {
+  address:
+    "Corporate Office. 62/63/64, Shakti Chember-1, 8A National Highway, Morbi-363642, (Gujarat), INDIA",
+  indiaSales: "+91 98246 54222",
+  exportSales: "+91 97120 54222",
+} as const;
+
+export const NAV = [
+  { label: "About Us", href: "#about" },
+  { label: "Our Products", href: "#chapters" },
+  { label: "Packing Details", href: "#outro" },
+  { label: "Contact Us", href: "#outro" },
+] as const;
+
+/**
+ * The values panel — geometry and type ported value-for-value from the
+ * reference terms section. One image rides the pointer for all three rows.
+ */
+export const VALUES = [
+  { num: "01", word: "Design" },
+  { num: "02", word: "Technology" },
+  { num: "03", word: "Durability" },
+] as const;
+
+export const VALUES_IMAGE = "/images/GIRL-SLEEPING.png";
+
+export const VALUES_INTRO =
+  "Ceramic and porcelain manufactured in Morbi since 1996 — design, technology and enduring quality held in a single surface, for walls, floors, counters and façades.";
+
+/**
+ * The closing handoff — the strip's last card freezes on screen while a
+ * vertical image carousel rises over it and the statement lands beside it.
+ * Line breaks are authored: the type is vw-fluid, so they hold at any width.
+ */
+export const HANDOFF = {
+  label: "Products",
+  /* Same register as the other statement panels: uppercase grotesk, the two
+     closing lines pushed to the right axis, the last one in italic serif. */
+  lines: [
+    { text: "Every surface" },
+    { text: "a room needs," },
+    { text: "made in Morbi", right: true },
+    { text: "since 1996.", right: true, em: true },
+  ] as { text: string; right?: boolean; em?: boolean }[],
+  paragraph: [
+    "Ceramic walls, digital porcelain, glazed and",
+    "double charged vitrified, wooden planks,",
+    "counter tops and full porcelain slabs —",
+    "the complete range, from one factory.",
+  ],
+  carousel: [
+    {
+      src: "/images/space-countertop-kitchen.png",
+      alt: "Orkay counter top slab on a kitchen island",
+    },
+    {
+      src: "/images/space-wooden-plank-living.jpg",
+      alt: "Orkay wooden plank porcelain on a living room wall and floor",
+    },
+  ],
+  linkLabel: "View all",
+  linkHref: "#outro",
+} as const;
+
+export type Chapter = {
+  num: string;
+  title: string[];
+  text: string;
+  image: string;
+  alt: string;
+};
+
+/** The six real Orkay product categories, with Orkay's own descriptions. */
+export const CHAPTERS: Chapter[] = [
+  {
+    num: "(01)",
+    title: ["Porcelain", "Tiles"],
+    text: "Porcelain tiles are currently very popular for their wide variety of usages including walls to floors to bathroom sink and cabinets.",
+    image: "/images/space-porcelain-facade.jpg",
+    alt: "Orkay porcelain tiles cladding a modern house facade surrounded by ferns",
+  },
+  {
+    num: "(02)",
+    title: ["Porcelain", "Slab Tiles"],
+    text: "Porcelain slabs are big in sizes and serve as a better option than natural stone due to its scratch and stain resistance surface and longevity and very low maintance.",
+    image: "/images/man-sitting-beige.png",
+    alt: "Orkay porcelain slab flooring and feature wall in a living room",
+  },
+  {
+    num: "(03)",
+    title: ["Ceramic", "Tiles"],
+    text: "Ceramic tile is a suitable choice for many areas of the home, whether it's walls or backsplashes of kitchen.",
+    image: "/images/space-ceramic-bathroom.jpg",
+    alt: "Orkay ceramic wall tiles in a bathroom",
+  },
+  {
+    num: "(04)",
+    title: ["Wooden", "Plank"],
+    text: "Wood looking porcelain tiles is better choice than natural wood plank due to its low maintenance and quick installation and better prices.",
+    image: "/images/GIRL-SLEEPING.png",
+    alt: "Orkay wooden plank porcelain on a living room wall and floor",
+  },
+  {
+    num: "(05)",
+    title: ["Counter", "Tops"],
+    text: "Tiles as countertop are gaining huge popularity because its non pours, resistance to heat and durable surface makes it better choice than granite or marble.",
+    image: "/images/IHBEIGE.png",
+    alt: "Orkay counter top slab on a kitchen island",
+  },
+  {
+    num: "(06)",
+    title: ["Outdoor", "Tiles"],
+    text: "Outdoor tiles are often made to survive the most severe weather conditions, including rain, sunshine, and temperature changes.",
+    image: "/images/space-blue-marble-living.jpg",
+    alt: "Orkay blue marble-look porcelain floor seen from above, a woman reading in a blue lounge chair",
+  },
+];
