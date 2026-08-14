@@ -38,9 +38,11 @@ export const NAV = [
 
 /** The fixed pill nav. `#top` is the document head — see Hero.tsx. */
 export const MENU = [
-  { label: "Home", href: "#top" },
   { label: "About Us", href: "#about" },
   { label: "Products", href: "#chapters" },
+  /* the outro block is already the contact card — address and both sales desks */
+  { label: "Contact Us", href: "#outro" },
+  { label: "Home", href: "#top" },
 ] as const;
 
 /**
