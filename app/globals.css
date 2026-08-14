@@ -1552,58 +1552,8 @@ body.on-dark .navpill {
   clip-path: inset(var(--cut) 0 0 0);
   will-change: transform;
 }
-/* ---------- the paper plane ----------
-   Rides the R's elongation: a 0x0 anchor parked on the cut line, a few px
-   clear of the glyph's right edge so the stem and the plane never overlap.
-   BrandStretch.tsx drives its y (and the trail's height) from st.r. */
-.brand__plane {
-  position: absolute;
-  top: var(--cut);
-  left: calc(100% + 0.4rem);
-  width: 0;
-  height: 0;
-  color: #d93a2b;
-  will-change: transform;
-}
-/* a 0x0 carrier GSAP's motionPath drives along the arc — rotation pivots
-   on its point, which is where the margins below park the nose */
-.brand__plane__ship {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 0;
-  will-change: transform;
-}
-/* nose (bottom of the glyph) on the carrier's point — margins, not a CSS
-   transform, so the flight's rotation starts from a clean slate */
-.brand__plane__ship svg {
-  display: block;
-  width: 40px;
-  height: 40px;
-  margin: -40px 0 0 -20px;
-}
-/* the flight arc — a 0-size svg whose path spills out visibly; the path
-   data comes from setArc() in BrandStretch.tsx */
-.brand__arc {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1px;
-  height: 1px;
-  overflow: visible;
-}
-/* the vertical trail is a growing dashed border — no SVG, no dashoffset */
-.brand__trail {
-  position: absolute;
-  top: var(--cut);
-  left: calc(100% + 0.4rem);
-  width: 0;
-  height: 0;
-  border-left: 4px dashed #d93a2b;
-}
-/* a soft pulse at the impact point — the globe's left edge, cut
-   horizontally — with the label beside it on the globe */
+/* a soft pulse on the globe's left edge, cut horizontally — with the label
+   beside it on the globe */
 .brand__glow {
   position: absolute;
   top: 50%;
@@ -1630,8 +1580,8 @@ body.on-dark .navpill {
 /* ---------- the globe ----------
    The closing frame on the section's right, where the figure used to sit —
    fully inside the padding band, so nothing clips it. The classic
-   spinning-globe trick: an equirectangular texture (generated — red land,
-   40 white country dots, connection arcs out of India) slides behind a
+   spinning-globe trick: an equirectangular texture (generated — black land,
+   40 red country dots, connection arcs out of India) slides behind a
    circle; inset shadows round it into a sphere. The plane's flight line
    crosses its lower-left curve, so the nose flies into it. */
 .brand__globe {
@@ -1641,14 +1591,14 @@ body.on-dark .navpill {
   width: 38vw;
   height: 38vw;
   border-radius: 50%;
-  background: #a31f14 url("/images/globe-texture.svg");
+  background: #0b0b0c url("/images/globe-texture-dark.svg");
   background-size: 200% 100%;
   background-repeat: repeat-x;
   box-shadow:
-    inset -3vw -2.5vw 6vw rgba(0, 0, 0, 0.4),
-    inset 2vw 2vw 5vw rgba(255, 255, 255, 0.16),
-    0 0 7vw rgba(217, 58, 43, 0.4);
-  animation: brand-globe-spin 40s linear infinite;
+    inset -3vw -2.5vw 6vw rgba(0, 0, 0, 0.75),
+    inset 2vw 2vw 5vw rgba(255, 255, 255, 0.1),
+    0 0 7vw rgba(217, 58, 43, 0.28);
+  animation: brand-globe-spin 90s linear infinite;
   opacity: 0;
 }
 /* -200% of a 200%-wide texture = exactly one full image width — seamless */
@@ -1656,6 +1606,18 @@ body.on-dark .navpill {
   to {
     background-position-x: -200%;
   }
+}
+/* Globe.tsx sets this once its first frame is on screen. The faked shading and
+   the scrolling texture go — the sphere brings its own — but the outer halo
+   stays, because it sits outside the silhouette where no shader reaches. */
+.brand__globe.is-3d {
+  background: none;
+  box-shadow: 0 0 7vw rgba(217, 58, 43, 0.28);
+  animation: none;
+}
+.brand__globe__gl {
+  position: absolute;
+  inset: 0;
 }
 .outro {
   position: relative;
@@ -2140,8 +2102,8 @@ body.on-dark .navpill {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
   }
-  /* no flight — the plane parks on the cut line, the label and globe just
-     show. BrandStretch.tsx skips the plane tweens under the same query, so
+  /* the label and globe just show. BrandStretch.tsx skips the reveal tweens
+     under the same query, so
      these opacities are never overridden by inline styles. The global rule
      above already freezes the globe's spin. */
   .brand__glow__label,
