@@ -127,28 +127,16 @@ export default function BrandStretch() {
       tl.to(st, { o: 1, r: TOGETHER, duration: 1, ease: "none", onUpdate: apply }, 0);
       tl.to(st, { r: R_MAX, duration: PHASE_TWO, ease: "none", onUpdate: apply }, 1);
 
-      /* The globe gets its own trigger rather than riding the stretch's tail.
-         Tacked onto that timeline it began the moment the R's tween ended —
-         but the R's foot sits on the stage's bottom edge, still well below the
-         viewport at that point, so the two read as simultaneous: the foot is
-         still travelling up into view as the globe arrives. Waiting on the
-         section's own bottom instead means the globe starts only once the
-         finished R is actually on screen, and it stays true if R_MAX changes.
-         Reduced motion skips all of it; the CSS shows the globe at rest. */
+      /* The globe rides the stretch's own trigger, from time 0 — it starts
+         arriving the instant the elongation does. Its outline is CSS and is
+         never animated, so the circle is on screen the moment it scrolls in;
+         --globe-fill is only the body inside it (fallback texture and the
+         three.js canvas both).
+
+         Reduced motion skips it; the CSS shows the globe at rest. */
       if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        const gl = gsap.timeline({
-          scrollTrigger: {
-            trigger: root,
-            /* a hair past "bottom bottom", where the stretch ends — the extra
-               margin lets scrub 2 finish catching up before the globe moves */
-            start: "bottom 92%",
-            end: "bottom 62%",
-            scrub: 2,
-            invalidateOnRefresh: true,
-          },
-        });
-        gl.to(q(".brand__globe"), { opacity: 1, duration: 1.0, ease: "none" }, 0);
-        gl.to(q(".brand__glow__label"), { opacity: 1, duration: 0.6, ease: "none" }, 0.6);
+        tl.to(q(".brand__globe"), { "--globe-fill": 1, duration: 0.6, ease: "none" }, 0);
+        tl.to(q(".brand__glow__label"), { opacity: 1, duration: 0.3, ease: "none" }, 0.6);
       }
     }, root);
 
