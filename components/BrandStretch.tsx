@@ -135,7 +135,13 @@ export default function BrandStretch() {
 
          Reduced motion skips it; the CSS shows the globe at rest. */
       if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        tl.to(q(".brand__globe"), { "--globe-fill": 1, duration: 0.6, ease: "none" }, 0);
+        const globe = q(".brand__globe");
+        /* it rides up into its resting place instead of sitting there: starts
+           12vw below the CSS position and closes the gap on scroll, so the
+           whole arrival is motion, not a fade onto a static circle. The offset
+           is JS, not CSS, so reduced motion leaves it at rest. */
+        tl.fromTo(globe, { y: "12vw" }, { y: 0, duration: 1.4, ease: "none" }, 0);
+        tl.to(globe, { "--globe-fill": 1, duration: 0.6, ease: "none" }, 0);
         tl.to(q(".brand__glow__label"), { opacity: 1, duration: 0.3, ease: "none" }, 0.6);
       }
     }, root);

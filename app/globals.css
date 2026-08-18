@@ -1567,7 +1567,7 @@ body.on-dark .navpill {
      shares its side of the stage, and the empty band below KAY's foot is
      ~46vw tall against a 38vw globe, so ~7vw is all the rise there is before
      the two touch. Past that the globe has to shrink or overlap the word. */
-  bottom: calc(var(--brand-caption) + 7vw);
+  bottom: calc(var(--brand-caption) + 4vw);
   width: 38vw;
   height: 38vw;
   border-radius: 50%;
