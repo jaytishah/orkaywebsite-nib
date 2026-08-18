@@ -106,8 +106,8 @@ export const HANDOFF = {
   ],
   carousel: [
     {
-      src: "/images/space-countertop-kitchen.png",
-      alt: "Orkay counter top slab on a kitchen island",
+      src: "/images/beige-counter-top.jpg",
+      alt: "Orkay counter top slab wrapping a kitchen island",
     },
     {
       src: "/images/space-wooden-plank-living.jpg",
@@ -155,14 +155,6 @@ export const CHAPTERS: Chapter[] = [
   },
   {
     num: "(03)",
-    title: ["Ceramic", "Tiles"],
-    text: "Ceramic tile is a suitable choice for many areas of the home, whether it's walls or backsplashes of kitchen.",
-    image: "/images/ceramic-tiles.png",
-    alt: "Orkay ceramic wall tiles in a bathroom",
-    tint: "#d2c8bf",
-  },
-  {
-    num: "(04)",
     title: ["Wooden", "Plank"],
     text: "Wood looking porcelain tiles is better choice than natural wood plank due to its low maintenance and quick installation and better prices.",
     image: "/images/wooden-plank-demo.png",
@@ -170,11 +162,19 @@ export const CHAPTERS: Chapter[] = [
     tint: "#4b2407",
   },
   {
+    num: "(04)",
+    title: ["Ceramic", "Tiles"],
+    text: "Ceramic tile is a suitable choice for many areas of the home, whether it's walls or backsplashes of kitchen.",
+    image: "/images/ceramic-tiles.png",
+    alt: "Orkay ceramic wall tiles in a bathroom",
+    tint: "#d2c8bf",
+  },
+  {
     num: "(05)",
     title: ["Counter", "Tops"],
     text: "Tiles as countertop are gaining huge popularity because its non pours, resistance to heat and durable surface makes it better choice than granite or marble.",
     image: "/images/IHBEIGE.png",
-    alt: "Orkay counter top slab on a kitchen island",
+    alt: "Orkay counter top slab wrapping a kitchen island",
     tint: "#c9b094",
   },
   {

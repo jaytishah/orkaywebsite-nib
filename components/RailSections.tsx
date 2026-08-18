@@ -20,7 +20,7 @@ export default function RailSections() {
       {/* ---- panel 3 : the statement ---- */}
       <div className="rail__text" data-panel="text" id="about">
         <div className="wrapper">
-          <div className="rail__text__section f-edit t-parrafo-l">About Us</div>
+          <div className="rail__text__section f-edit t-parrafo-l">Gallery 02</div>
 
           <div className="rail__text__wrap-text">
             <div className="rail__text__title" data-lines>
@@ -39,11 +39,10 @@ export default function RailSections() {
 
             <div className="rail__text__text f-grotesk">
               <p>
-                We manufacture Ceramic Wall Tiles, Digital Porcelain Tiles,
-                Glazed Vitrified Tiles &amp; Double Charged Vitrified Tiles.
-                From wall tiles to GVT/PGVT, nano vitrified tiles to porcelain
-                slabs, we infuse our practicable aesthetic and function-first
-                commitment into every product we make.
+                A surface outlives the taste that chose it. That is the whole
+                discipline here — ceramic and porcelain fired in Morbi for
+                walls, floors, counters and façades, drawn so they still hold
+                a room long after the trend that picked them has passed.
               </p>
             </div>
           </div>
@@ -109,7 +108,7 @@ export default function RailSections() {
           {[0, 1, 2].map((i) => (
             <span key={i}>
               <p className="rail__carousel__text f-edit t-supertitulo t-upper">
-                Values
+                Craftsmanship
               </p>
               <img className="rail__carousel__image" src="/images/asterisk.svg" alt="" />
             </span>

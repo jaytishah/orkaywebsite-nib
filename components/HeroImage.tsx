@@ -41,8 +41,8 @@ export default function HeroImage() {
         <div className="media__wrap-source image" data-hero-main-inner>
           <img
             className="media__source w-100"
-            src="/images/space-travertine-living.jpg"
-            alt="Orkay travertine-look tiles across the floor and walls of a garden-side living room"
+            src="/images/beige-tree.jpg"
+            alt="Orkay marble-look porcelain across the floor and feature wall of a window-side living room"
           />
         </div>
       </div>
