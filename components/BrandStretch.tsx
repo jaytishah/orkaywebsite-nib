@@ -30,12 +30,18 @@
  */
 
 import { useLayoutEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { CONTACT } from "@/lib/content";
 
 gsap.registerPlugin(ScrollTrigger);
+
+/* three.js only for the closing frame — kept out of the page's first load and
+   off the server entirely. Until it arrives (or if it never does) the CSS
+   globe in globals.css is what is on screen. */
+const Globe = dynamic(() => import("./Globe"), { ssr: false });
 
 /* Every sprite's box in the artwork's own pixels, exactly as cut from frame
    02. Positions are laid out for the R at full travel, so collapsing the
@@ -181,9 +187,13 @@ export default function BrandStretch() {
         <Sprite name="kay" />
       </span>
 
-      {/* the closing frame: the spinning red globe, the 40 export countries
-          baked into its texture, the label on its left edge */}
+      {/* the closing frame: the spinning black globe, the 40 export countries
+          baked into its texture, the route arcs out of India. The glow pulses
+          on its left edge, the label beside it. The element keeps painting the
+          CSS globe — Globe lays a real three.js sphere over it and adds
+          `is-3d`, which turns the CSS one off. */}
       <span className="brand__globe" aria-hidden>
+        <Globe />
         <span className="brand__glow" />
         <span className="brand__glow__label f-edit t-upper">40 Countries</span>
       </span>

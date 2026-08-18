@@ -1537,7 +1537,7 @@ body.on-dark .navpill {
 .brand__part[data-part$="-bot"] {
   will-change: transform;
 }
-/* a soft pulse on the globe's left edge, cut horizontally, with the label
+/* a soft pulse on the globe's left edge, cut horizontally — with the label
    beside it on the globe */
 .brand__glow {
   position: absolute;
@@ -1565,9 +1565,10 @@ body.on-dark .navpill {
 /* ---------- the globe ----------
    The closing frame on the section's right, where the figure used to sit —
    fully inside the padding band, so nothing clips it. The classic
-   spinning-globe trick: an equirectangular texture (generated — red land,
-   a flag badge per export country, connection arcs out of India) slides
-   behind a circle; inset shadows round it into a sphere. */
+   spinning-globe trick: an equirectangular texture (generated — black land,
+   40 red country dots, connection arcs out of India) slides behind a
+   circle; inset shadows round it into a sphere. This is the fallback:
+   Globe.tsx lays a real three.js sphere over it once loaded. */
 .brand__globe {
   position: absolute;
   right: var(--wrapper-padd);
@@ -1576,14 +1577,14 @@ body.on-dark .navpill {
   width: 38vw;
   height: 38vw;
   border-radius: 50%;
-  background: #a31f14 url("/images/globe-texture.svg");
+  background: #0b0b0c url("/images/globe-texture-dark.svg");
   background-size: 200% 100%;
   background-repeat: repeat-x;
   box-shadow:
-    inset -3vw -2.5vw 6vw rgba(0, 0, 0, 0.4),
-    inset 2vw 2vw 5vw rgba(255, 255, 255, 0.16),
-    0 0 7vw rgba(217, 58, 43, 0.4);
-  animation: brand-globe-spin 40s linear infinite;
+    inset -3vw -2.5vw 6vw rgba(0, 0, 0, 0.75),
+    inset 2vw 2vw 5vw rgba(255, 255, 255, 0.1),
+    0 0 7vw rgba(217, 58, 43, 0.28);
+  animation: brand-globe-spin 90s linear infinite;
   opacity: 0;
 }
 /* -200% of a 200%-wide texture = exactly one full image width — seamless */
@@ -1591,6 +1592,18 @@ body.on-dark .navpill {
   to {
     background-position-x: -200%;
   }
+}
+/* Globe.tsx sets this once its first frame is on screen. The faked shading and
+   the scrolling texture go — the sphere brings its own — but the outer halo
+   stays, because it sits outside the silhouette where no shader reaches. */
+.brand__globe.is-3d {
+  background: none;
+  box-shadow: 0 0 7vw rgba(217, 58, 43, 0.28);
+  animation: none;
+}
+.brand__globe__gl {
+  position: absolute;
+  inset: 0;
 }
 .outro {
   position: relative;
@@ -2077,9 +2090,9 @@ body.on-dark .navpill {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
   }
-  /* the label and globe just show. BrandStretch.tsx skips their tweens
-     under the same query, so these opacities are never overridden by
-     inline styles. The global rule above already freezes the spin. */
+  /* the label and globe just show. BrandStretch.tsx skips the reveal tweens
+     under the same query, so these opacities are never overridden by inline
+     styles. The global rule above already freezes the globe's spin. */
   .brand__glow__label,
   .brand__globe {
     opacity: 1;
