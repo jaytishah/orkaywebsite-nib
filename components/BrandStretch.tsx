@@ -139,16 +139,21 @@ export default function BrandStretch() {
         const gl = gsap.timeline({
           scrollTrigger: {
             trigger: root,
-            /* a hair past "bottom bottom", where the stretch ends — the extra
-               margin lets scrub 2 finish catching up before the globe moves */
-            start: "bottom 92%",
-            end: "bottom 62%",
+            /* "bottom bottom" is exactly where the stretch's own trigger
+               ends, so the globe starts the moment the R is done and never
+               shares the screen with it still moving. The window is kept
+               short on purpose: the reveal used to run over 30% of the
+               viewport, which is what made it feel late — the globe was
+               technically fading the whole time but only read as present
+               near the end of it. */
+            start: "bottom bottom",
+            end: "bottom 80%",
             scrub: 2,
             invalidateOnRefresh: true,
           },
         });
-        gl.to(q(".brand__globe"), { opacity: 1, duration: 1.0, ease: "none" }, 0);
-        gl.to(q(".brand__glow__label"), { opacity: 1, duration: 0.6, ease: "none" }, 0.6);
+        gl.to(q(".brand__globe"), { opacity: 1, duration: 0.8, ease: "none" }, 0);
+        gl.to(q(".brand__glow__label"), { opacity: 1, duration: 0.5, ease: "none" }, 0.55);
       }
     }, root);
 
