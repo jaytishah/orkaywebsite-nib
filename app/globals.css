@@ -1562,8 +1562,12 @@ body.on-dark .navpill {
   --globe-fill: 0;
   position: absolute;
   right: var(--wrapper-padd);
-  /* clears the caption band; the overhang above is --brand-globe-drop */
-  bottom: var(--brand-caption);
+  /* Lifted off the R's foot by as much as there is room for, so it scrolls
+     into view while the R is still elongating. The ceiling is KAY: the globe
+     shares its side of the stage, and the empty band below KAY's foot is
+     ~46vw tall against a 38vw globe, so ~7vw is all the rise there is before
+     the two touch. Past that the globe has to shrink or overlap the word. */
+  bottom: calc(var(--brand-caption) + 7vw);
   width: 38vw;
   height: 38vw;
   border-radius: 50%;
@@ -2219,6 +2223,9 @@ body.on-dark .navpill {
   .brand__globe {
     width: 58vw;
     height: 58vw;
+    /* no rise here: at 58vw the globe is already taller than the band under
+       KAY, which is what --brand-globe-drop is buying it */
+    bottom: var(--brand-caption);
   }
 
   .outro__grid {
