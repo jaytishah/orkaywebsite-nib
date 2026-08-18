@@ -82,18 +82,16 @@ export default function Home() {
            centred pill closing the panel. */}
       <section className="pitch">
         <h2 className="pitch__title f-edit t-upper">
-          <span>Excellence in its</span>
-          <span>highest</span>
-          <span className="t-right">Expression</span>
+          <span>A surface is a</span>
+          <span>decision</span>
+          <span className="t-right">you live with</span>
         </h2>
 
         <div className="pitch__body">
           <p>
-            At Orkay Tiles our priority is a close, personal service — helping
-            architects, dealers and homeowners find the right surface. Our team
-            is on hand to answer your questions and guide you through every step,
-            from selection to packing and export. Talk to us and start the
-            process.
+            Architects, dealers and homeowners arrive with a space and a feeling
+            about it. We help them find the surface that answers it, then stay
+            with it through selection, packing and export.
           </p>
           <p className="pitch__contact">
             India — {CONTACT.indiaSales}
@@ -103,7 +101,7 @@ export default function Home() {
         </div>
 
         <a className="pitch__cta f-edit" href="#outro">
-          Request information
+          Ask about a surface
         </a>
       </section>
 

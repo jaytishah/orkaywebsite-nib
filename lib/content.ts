@@ -173,9 +173,9 @@ export const CHAPTERS: Chapter[] = [
     num: "(05)",
     title: ["Counter", "Tops"],
     text: "Tiles as countertop are gaining huge popularity because its non pours, resistance to heat and durable surface makes it better choice than granite or marble.",
-    image: "/images/IHBEIGE.png",
-    alt: "Orkay counter top slab wrapping a kitchen island",
-    tint: "#c9b094",
+    image: "/images/beige-counter-top.jpg",
+    alt: "Orkay counter top slab wrapping a kitchen island, matching backsplash behind",
+    tint: "#c9bcaa",
   },
   {
     num: "(06)",
