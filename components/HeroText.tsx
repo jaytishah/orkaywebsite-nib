@@ -21,7 +21,7 @@ export default function HeroText() {
         <VerticalLabel />
 
         <div className="rail__intro__section f-edit t-parrafo-l" data-intro-fade>
-          Home
+          Gallery 01
         </div>
         <div className="rail__intro__copyright t-subtitulo f-grotesk" data-intro-fade>
           {BRAND.name} ©2026
@@ -42,9 +42,9 @@ export default function HeroText() {
 
           <div className="rail__intro__text f-grotesk" data-intro-text>
             <p>
-              Since 1996, Orkay Tiles has been manufacturing premium ceramic and
-              porcelain tiles in Morbi, Gujarat — surfaces where design,
-              technology and enduring quality meet.
+              Two rooms, one surface. Travertine light across a garden-side
+              living room; onyx cut deep into a wall after dark. Every space
+              here is real, and every surface in it is one you can order.
             </p>
           </div>
 

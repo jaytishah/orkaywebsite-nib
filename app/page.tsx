@@ -1,7 +1,15 @@
 import BrandStretch from "@/components/BrandStretch";
 import Hero from "@/components/Hero";
 import Navigation from "@/components/Navigation";
-import { BRAND, CONTACT, CHAPTERS, SHOWCASE_MARK } from "@/lib/content";
+import {
+  BRAND,
+  CONTACT,
+  CHAPTERS,
+  FOOTER_BLURB,
+  MENU,
+  SHOWCASE_MARK,
+  SOCIALS,
+} from "@/lib/content";
 
 export default function Home() {
   return (
@@ -109,34 +117,68 @@ export default function Home() {
           <em>porcelain slabs.</em>
         </h2>
 
+        {/* ---- the columns ----
+             Reference anatomy (orkaytiles.com footer): the mark and its blurb
+             on the left, quick links and products beside it, the full contact
+             card on the right — recut in this site's register. */}
         <div className="outro__grid">
+          <div className="outro__brand">
+            <img src="/images/orkay-logo-white.svg" alt={BRAND.name} />
+            <p className="outro__brand__tagline f-edit">
+              Explore Orkay Tiles — <em>{BRAND.tagline}</em>
+            </p>
+            <p className="outro__brand__blurb">{FOOTER_BLURB}</p>
+          </div>
           <div>
-            <h3>Products</h3>
+            <h3>Quick Links</h3>
+            {MENU.map((m) => (
+              <p key={m.label}>
+                <a href={m.href}>{m.label}</a>
+              </p>
+            ))}
+            <p>
+              <a href="/privacy-policy">Privacy Policy</a>
+            </p>
+            <p>
+              <a href="/terms-and-conditions">Terms &amp; Conditions</a>
+            </p>
+          </div>
+          <div>
+            <h3>Our Products</h3>
             {CHAPTERS.map((c) => (
-              <p key={c.num}>{c.title.join(" ")}</p>
+              <p key={c.num}>
+                <a href="#chapters">{c.title.join(" ")}</a>
+              </p>
             ))}
           </div>
           <div>
-            <h3>Corporate Office</h3>
+            <h3>Contact Details</h3>
             <p>{CONTACT.address}</p>
-          </div>
-          <div>
-            <h3>Sales</h3>
-            <p>India — {CONTACT.indiaSales}</p>
-            <p>Export — {CONTACT.exportSales}</p>
-          </div>
-          <div>
-            <h3>Since</h3>
-            <p>{BRAND.since}</p>
-            <p>{BRAND.place}</p>
+            <p className="outro__contact">
+              <a href={`tel:${CONTACT.indiaSales.replace(/\s/g, "")}`}>
+                India — {CONTACT.indiaSales}
+              </a>
+              <a href={`tel:${CONTACT.exportSales.replace(/\s/g, "")}`}>
+                Export — {CONTACT.exportSales}
+              </a>
+              <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+            </p>
           </div>
         </div>
 
         <div className="outro__foot t-subtitulo">
           <span>
-            {BRAND.name} — {BRAND.tagline}
+            Copyright © {new Date().getFullYear()} {BRAND.name}. All Rights
+            Reserved.
           </span>
           <span>{BRAND.madeIn}</span>
+          <span className="outro__social">
+            {SOCIALS.map((s) => (
+              <a key={s.label} href={s.href} target="_blank" rel="noreferrer">
+                {s.label}
+              </a>
+            ))}
+          </span>
         </div>
       </section>
     </>

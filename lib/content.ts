@@ -16,7 +16,20 @@ export const CONTACT = {
     "Corporate Office. 62/63/64, Shakti Chember-1, 8A National Highway, Morbi-363642, (Gujarat), INDIA",
   indiaSales: "+91 98246 54222",
   exportSales: "+91 97120 54222",
+  email: "info@orkaytiles.com",
 } as const;
+
+/** Orkay's own footer copy, from orkaytiles.com. */
+export const FOOTER_BLURB =
+  "We manufacture Ceramic Wall Tiles, Digital Porcelain Tiles, Glazed Vitrified Tiles & Double Charged Vitrified Tiles. We focus on Quality and Unique Designs for our clients that enable them to stay ahead in competition and grow their businesses.";
+
+/** Live profiles, hrefs taken from the orkaytiles.com footer. */
+export const SOCIALS = [
+  { label: "Facebook", href: "https://www.facebook.com/orkaytiles" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/orkay-tiles/" },
+  { label: "Instagram", href: "https://www.instagram.com/orkay_tiles/" },
+  { label: "YouTube", href: "https://www.youtube.com/@orkaytiles" },
+] as const;
 
 /**
  * The images panel's own chrome — reference: a single statement line across
@@ -24,7 +37,7 @@ export const CONTACT = {
  * the opposite corner, its line above it.
  */
 export const HERO_MARK = {
-  headline: "Surfaces beyond the ordinary",
+  headline: "Rooms, not samples",
   name: "Orchid Isles",
   tagline: BRAND.tagline,
 } as const;
