@@ -1545,7 +1545,8 @@ body.on-dark .navpill {
   white-space: nowrap;
   font-size: var(--parrafo-l);
   line-height: var(--parrafo-l-lh);
-  color: #fff;
+  /* the globe under it is transparent now, so the label sits on the bone */
+  color: var(--ink);
   opacity: 0;
 }
 /* ---------- the globe ----------
@@ -1585,12 +1586,11 @@ body.on-dark .navpill {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: #0b0b0c url("/images/globe-texture-dark.svg");
+  /* no ocean and no faked shading — the body is transparent, the map is all
+     there is, same as the three.js sphere that replaces it */
+  background: url("/images/globe-texture-dark.svg");
   background-size: 200% 100%;
   background-repeat: repeat-x;
-  box-shadow:
-    inset -3vw -2.5vw 6vw rgba(0, 0, 0, 0.75),
-    inset 2vw 2vw 5vw rgba(255, 255, 255, 0.1);
   animation: brand-globe-spin 90s linear infinite;
   opacity: var(--globe-fill);
 }

@@ -33,8 +33,6 @@ const TILT = 23.4 * (Math.PI / 180);
 /** the texture is 2000×1000; drawn at 2× so coastlines stay crisp on a 38vw sphere */
 const TEX_W = 4096;
 const TEX_H = 2048;
-/** ocean — the SVG is land paths only, it carries no background of its own */
-const OCEAN = "#0b0b0c";
 
 /** points sampled per route arc; also the resolution the pulse slides at */
 const ARC_STEPS = 128;
@@ -97,10 +95,15 @@ export default function Globe() {
     scene.add(globe);
 
     const geometry = new THREE.SphereGeometry(1, 96, 64);
+    /* No ocean: the texture is drawn on a transparent canvas, so only the land
+       paths, the country dots and the arcs are solid and the page shows
+       through everywhere else. Back faces are culled by default, so the far
+       side's land does not print through the near one. */
     const material = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       roughness: 1,
       metalness: 0,
+      transparent: true,
     });
     const sphere = new THREE.Mesh(geometry, material);
 
@@ -300,8 +303,6 @@ export default function Globe() {
         canvas.width = TEX_W;
         canvas.height = TEX_H;
         const ctx = canvas.getContext("2d")!;
-        ctx.fillStyle = OCEAN;
-        ctx.fillRect(0, 0, TEX_W, TEX_H);
         ctx.drawImage(img, 0, 0, TEX_W, TEX_H);
 
         texture = new THREE.CanvasTexture(canvas);
