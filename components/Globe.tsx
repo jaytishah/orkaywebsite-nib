@@ -12,7 +12,7 @@
  * Here the same texture (`globe-texture-dark.svg`, 179 country paths, 40 export
  * markers, the route arcs out of India) is wrapped onto a real sphere, lit from
  * the upper left so the terminator matches the shading the CSS version faked,
- * and given a fresnel rim in Orkay red so the silhouette separates from the
+ * lit so the silhouette separates from the
  * cream page.
  *
  * The CSS globe is deliberately left in place underneath as the fallback: it
@@ -64,30 +64,6 @@ function uvToPoint([u, v]: UV, radius = 1.004): THREE.Vector3 {
     radius * Math.sin(phi) * Math.sin(theta)
   );
 }
-
-const RIM_VERT = /* glsl */ `
-  varying vec3 vNormal;
-  varying vec3 vView;
-  void main() {
-    vNormal = normalize(normalMatrix * normal);
-    vec4 mv = modelViewMatrix * vec4(position, 1.0);
-    vView = mv.xyz;
-    gl_Position = projectionMatrix * mv;
-  }
-`;
-
-const RIM_FRAG = /* glsl */ `
-  uniform vec3 uColor;
-  uniform float uPower;
-  uniform float uStrength;
-  varying vec3 vNormal;
-  varying vec3 vView;
-  void main() {
-    // abs(), because the shell is rendered BackSide and its normals point in
-    float f = pow(1.0 - abs(dot(normalize(vNormal), normalize(-vView))), uPower);
-    gl_FragColor = vec4(uColor, f * uStrength);
-  }
-`;
 
 export default function Globe() {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -142,26 +118,6 @@ export default function Globe() {
     world.add(sphere);
     globe.add(world);
 
-    /* the rim: a barely-larger inside-out shell, additive, so it only ever
-       brightens the edge and never washes the land. The shell has to hug the
-       sphere — push it out and the falloff stops being a rim and becomes a
-       ring drawn around the planet. */
-    const rimGeometry = new THREE.SphereGeometry(1.012, 96, 64);
-    const rimMaterial = new THREE.ShaderMaterial({
-      uniforms: {
-        uColor: { value: new THREE.Color(0xd93a2b) },
-        uPower: { value: 5.5 },
-        uStrength: { value: 0.5 },
-      },
-      vertexShader: RIM_VERT,
-      fragmentShader: RIM_FRAG,
-      side: THREE.BackSide,
-      blending: THREE.AdditiveBlending,
-      transparent: true,
-      depthWrite: false,
-    });
-    globe.add(new THREE.Mesh(rimGeometry, rimMaterial));
-
     /* ---------- the export routes ----------
        One arc per destination, lifted off the surface so it reads as a flight
        path rather than a line drawn on the map. Each is a quadratic Bézier
@@ -200,7 +156,7 @@ export default function Globe() {
       new THREE.BufferAttribute(restPositions, 3)
     );
     const restMaterial = new THREE.LineBasicMaterial({
-      color: 0xd93a2b,
+      color: 0x8a8a99,
       transparent: true,
       opacity: 0.32,
     });
@@ -210,7 +166,7 @@ export default function Globe() {
        arc by setDrawRange. No geometry is rebuilt per frame and no shader is
        involved — the whole animation is two integers per route. */
     const pulseMaterial = new THREE.LineBasicMaterial({
-      color: 0xff7a5c,
+      color: 0xf2efea,
       transparent: true,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
@@ -240,8 +196,8 @@ export default function Globe() {
     const key = new THREE.DirectionalLight(0xfff2ec, 1.9);
     key.position.set(-2.2, 1.8, 2.4);
     scene.add(key);
-    /* a dim red bounce on the dark side — the page's own glow, reflected back */
-    const fill = new THREE.DirectionalLight(0xd93a2b, 0.55);
+    /* a dim bounce on the dark side — the bone page, reflected back */
+    const fill = new THREE.DirectionalLight(0xf2efea, 0.55);
     fill.position.set(2.5, -1, -1.5);
     scene.add(fill);
     /* generous ambient on purpose: a physically-correct terminator would eat
@@ -378,8 +334,6 @@ export default function Globe() {
       texture?.dispose();
       geometry.dispose();
       material.dispose();
-      rimGeometry.dispose();
-      rimMaterial.dispose();
       restGeometry.dispose();
       restMaterial.dispose();
       for (const g of pulses) g.dispose();

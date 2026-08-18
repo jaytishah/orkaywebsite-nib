@@ -2,16 +2,31 @@
 
 /**
  * The closing wordmark — reference: normalisboring.es, whose footer sets a
- * giant "BORING" that elongates as it scrolls into view. The reference draws
- * the word as an SVG with a normal and an elongated path per letter and
- * scrubs GSAP MorphSVGPlugin between them; MorphSVG is a paid Club plugin,
- * so this rebuilds the same move from live text: each stretching letter is
- * sliced at its waist, the lower half slides down, and a thin band of the
- * glyph's own mid-section is scaled tall to fill the gap. The stems extend
- * while the caps keep their drawing — visually the same elongation.
+ * giant "BORING" that elongates on scroll.
  *
- * Choreography (ours, per the brief): O and R rise together first, then the
- * R alone keeps going. The reference stretches all its letters at once.
+ * Driven by the brand artwork, not live text. The earlier build sliced a
+ * Playfair 900 "R" at its waist and scaled the band to fill the extension;
+ * no cut through that glyph is clean, because its leg is diagonal — every
+ * band scaled tall sheared the leg sideways and tore the foot serif off it.
+ * The artwork fixes it at the source: "ARKAY text 1-02.png" redraws the R
+ * with the leg vertical below the bowl, so a band taken there is two parallel
+ * strokes and scales without distorting anything.
+ *
+ * Both PNGs were measured — ink bounds and per-row stroke edges — and every
+ * number here comes off that measurement:
+ *   · 01 is the rest frame, 02 the extended one. K, A and Y are identical in
+ *     both; only the O and R are extruded, straight down.
+ *   · Comparing the two baselines, the O extends 1446px of the source and the
+ *     R 2389px.
+ *   · Each band is exactly that extension tall, cut where the strokes run
+ *     parallel: 7px of edge drift across the O's band and 8px across the R's,
+ *     out of a 10667px-wide source — 0.07%.
+ * So scaleY(0) reassembles frame 01's bounding box exactly, scaleY(1) is
+ * frame 02 pixel-for-pixel, and every frame between is a true stretch. The
+ * sprites are cut from 02 alone; 01 only supplied the rest measurements.
+ *
+ * Choreography (ours, per the brief): O and R rise together first, then the R
+ * alone keeps going. The reference stretches all its letters at once.
  */
 
 import { useLayoutEffect, useRef } from "react";
@@ -28,26 +43,54 @@ gsap.registerPlugin(ScrollTrigger);
    globe in globals.css is what is on screen. */
 const Globe = dynamic(() => import("./Globe"), { ssr: false });
 
-const WORD = ["O", "R", "K", "A", "Y"];
+/* Every sprite's box in the artwork's own pixels, exactly as cut from frame
+   02. Positions are laid out for the R at full travel, so collapsing the
+   bands is what produces the rest state. */
+const W = 3833;
+const BOX = {
+  kay: { x: 1699, y: 7, w: 2134, h: 821 },
+  "o-top": { x: 0, y: 0, w: 821, h: 403 },
+  "o-band": { x: 0, y: 403, w: 821, h: 542 },
+  "o-bot": { x: 0, y: 945, w: 821, h: 434 },
+  "r-top": { x: 916, y: 7, w: 669, h: 741 },
+  "r-band": { x: 916, y: 748, w: 669, h: 896 },
+  "r-bot": { x: 916, y: 1644, w: 669, h: 80 },
+} as const;
 
-/* The waist line per stretching letter, as a fraction of the line box.
-   Measured off the rendered Playfair 900 glyphs, not guessed: in the R the
-   bowl meets the stem at 57.6% and the foot serifs flare at 87.6%, so 86%
-   is the last clean stem+leg band — cutting there leaves the whole drawing
-   intact above and extrudes only the two verticals. The O cuts mid-counter,
-   where both sides are parallel. Keep in sync with the clip-path
-   percentages in globals.css (.brand__part--*). */
-const CUT: Record<string, number> = { O: 0.52, R: 0.86 };
-/* height of the band that becomes the extension — 0.5% of the line box each
-   side of the cut (the CSS clips the mid part to cut ± 0.5%). Thin, so the
-   glyph's taper across the band never reads as a step at the seams. */
-const SLICE = 0.01;
+/* How far past the artwork the R keeps going — the one knob for its length.
+   1 stops at frame 02 exactly; above that the band simply scales on, because
+   it is two parallel strokes and has nothing in it left to distort. If you
+   change this, retune --brand-globe-drop in globals.css: a longer R makes the
+   stage taller, which gives the globe more room inside it, not less. */
+const R_MAX = 2;
 
-/* extension distances, as fractions of the line box. Keep in sync with the
-   section's bottom padding and the figure's bottom offset in globals.css —
-   that is what puts the figure's bottom on the R's final baseline. */
-const PHASE_ONE = 1.0; // O and R, together
-const R_FINAL = 2.2; // where the R alone ends up
+/* the stage has to be tall enough to hold the R at full travel */
+const H = BOX["r-band"].y + BOX["r-band"].h * R_MAX + BOX["r-bot"].h;
+
+/* The R's travel is the longer one, so "together" ends the moment it has
+   dropped as far as the O's whole extension. After that the R goes on alone,
+   and phase two is given its length in proportion — otherwise the R would
+   visibly speed up the moment the O stops. */
+const TOGETHER = BOX["o-band"].h / BOX["r-band"].h;
+const PHASE_TWO = ((R_MAX - TOGETHER) * BOX["r-band"].h) / BOX["o-band"].h;
+
+function Sprite({ name }: { name: keyof typeof BOX }) {
+  const b = BOX[name];
+  return (
+    <img
+      className="brand__part"
+      data-part={name}
+      src={`/images/wordmark-${name}.png`}
+      alt=""
+      style={{
+        left: `${(b.x / W) * 100}%`,
+        top: `${(b.y / H) * 100}%`,
+        width: `${(b.w / W) * 100}%`,
+        height: `${(b.h / H) * 100}%`,
+      }}
+    />
+  );
+}
 
 export default function BrandStretch() {
   const rootRef = useRef<HTMLElement>(null);
@@ -55,37 +98,21 @@ export default function BrandStretch() {
   useLayoutEffect(() => {
     const root = rootRef.current!;
     const ctx = gsap.context(() => {
-      const setters: Record<string, (ext: number) => void> = {};
+      const q = (s: string) => root.querySelector<HTMLElement>(s)!;
+      const band = { o: q('[data-part="o-band"]'), r: q('[data-part="r-band"]') };
+      const foot = { o: q('[data-part="o-bot"]'), r: q('[data-part="r-bot"]') };
 
-      root.querySelectorAll<HTMLElement>("[data-stretch]").forEach((el) => {
-        const cut = CUT[el.dataset.stretch!];
-        const bot = el.querySelector<HTMLElement>(".brand__part--bot")!;
-        const mid = el.querySelector<HTMLElement>(".brand__part--mid")!;
-        setters[el.dataset.stretch!] = (ext) => {
-          const h = el.offsetHeight;
-          gsap.set(bot, { y: ext });
-          /* origin on the cut line: the scaled band then overlaps 1% under
-             each half, so no seam can open between the three layers */
-          gsap.set(mid, {
-            y: ext / 2,
-            scaleY: 1 + ext / (SLICE * h),
-            transformOrigin: `50% ${cut * 100}%`,
-          });
-        };
-      });
-
-      const reduce = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-      const globe = root.querySelector<HTMLElement>(".brand__globe")!;
-      const h = () =>
-        root.querySelector<HTMLElement>("[data-stretch]")!.offsetHeight;
-
+      /* t is 0..1 of that letter's extension. The band scales from the cut
+         line; the foot rides down with it, and because the band's laid-out
+         height IS the extension, the two always meet — no seam to open. */
       const st = { o: 0, r: 0 };
-      const apply = () => {
-        setters.O(st.o);
-        setters.R(st.r);
-      };
+      const apply = () =>
+        (["o", "r"] as const).forEach((k) => {
+          gsap.set(band[k], { scaleY: st[k] });
+          gsap.set(foot[k], { y: -(1 - st[k]) * band[k].offsetHeight });
+        });
+      /* before first paint, so the extended artwork never flashes */
+      apply();
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -97,41 +124,31 @@ export default function BrandStretch() {
           invalidateOnRefresh: true,
         },
       });
-      tl.to(
-        st,
-        {
-          o: () => PHASE_ONE * h(),
-          r: () => PHASE_ONE * h(),
-          duration: 1,
-          ease: "none",
-          onUpdate: apply,
-        },
-        0
-      );
-      tl.to(
-        st,
-        { r: () => R_FINAL * h(), duration: 1, ease: "none", onUpdate: apply },
-        1
-      );
-      /* the closing frame arrives once the R has settled at 2. Reduced motion
-         skips it; the CSS shows the globe and label at rest. */
-      if (!reduce) {
-        tl.to(globe, { opacity: 1, duration: 1.0, ease: "none" }, 2.2);
-        /* a scrubbed pulse on the globe's left edge as it lands */
-        tl.to(
-          root.querySelector(".brand__glow"),
-          {
-            keyframes: { opacity: [0, 0.55, 0.3, 0.5] },
-            duration: 0.9,
-            ease: "none",
+      tl.to(st, { o: 1, r: TOGETHER, duration: 1, ease: "none", onUpdate: apply }, 0);
+      tl.to(st, { r: R_MAX, duration: PHASE_TWO, ease: "none", onUpdate: apply }, 1);
+
+      /* The globe gets its own trigger rather than riding the stretch's tail.
+         Tacked onto that timeline it began the moment the R's tween ended —
+         but the R's foot sits on the stage's bottom edge, still well below the
+         viewport at that point, so the two read as simultaneous: the foot is
+         still travelling up into view as the globe arrives. Waiting on the
+         section's own bottom instead means the globe starts only once the
+         finished R is actually on screen, and it stays true if R_MAX changes.
+         Reduced motion skips all of it; the CSS shows the globe at rest. */
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const gl = gsap.timeline({
+          scrollTrigger: {
+            trigger: root,
+            /* a hair past "bottom bottom", where the stretch ends — the extra
+               margin lets scrub 2 finish catching up before the globe moves */
+            start: "bottom 92%",
+            end: "bottom 62%",
+            scrub: 2,
+            invalidateOnRefresh: true,
           },
-          3.4
-        );
-        tl.to(
-          root.querySelector(".brand__glow__label"),
-          { opacity: 1, duration: 0.6, ease: "none" },
-          3.7
-        );
+        });
+        gl.to(q(".brand__globe"), { opacity: 1, duration: 1.0, ease: "none" }, 0);
+        gl.to(q(".brand__glow__label"), { opacity: 1, duration: 0.6, ease: "none" }, 0.6);
       }
     }, root);
 
@@ -151,40 +168,24 @@ export default function BrandStretch() {
         </a>
       </div>
 
-      <span className="brand__word" aria-hidden>
-        {WORD.map((ch, i) =>
-          CUT[ch] ? (
-            <span
-              key={i}
-              className="brand__letter"
-              data-stretch={ch}
-              style={{ "--cut": `${CUT[ch] * 100}%` } as React.CSSProperties}
-            >
-              <span className="brand__ghost">{ch}</span>
-              <span className="brand__part brand__part--top">{ch}</span>
-              <span className="brand__part brand__part--mid">{ch}</span>
-              <span className="brand__part brand__part--bot">{ch}</span>
-            </span>
-          ) : (
-            <span key={i} className="brand__letter">
-              {ch}
-            </span>
-          )
-        )}
+      <span className="brand__word" style={{ aspectRatio: `${W} / ${H}` }} aria-hidden>
+        <Sprite name="o-top" />
+        <Sprite name="o-band" />
+        <Sprite name="o-bot" />
+        <Sprite name="r-top" />
+        <Sprite name="r-band" />
+        <Sprite name="r-bot" />
+        <Sprite name="kay" />
       </span>
 
-      {/* the closing frame: the spinning black globe the plane flies into,
-          the 40 export countries baked into its texture. The glow pulses
-          at the impact point on its left edge, the label beside it.
-          The element keeps painting the CSS globe — Globe lays a real
-          three.js sphere over it and adds `is-3d`, which turns the CSS one
-          off. The plane's flight still measures this box, not the canvas. */}
+      {/* the closing frame: the spinning black globe, the 40 export countries
+          baked into its texture, the route arcs out of India. The glow pulses
+          on its left edge, the label beside it. The element keeps painting the
+          CSS globe — Globe lays a real three.js sphere over it and adds
+          `is-3d`, which turns the CSS one off. */}
       <span className="brand__globe" aria-hidden>
         <Globe />
-        <span className="brand__glow" />
-        <span className="brand__glow__label f-edit t-upper">
-          40 Countries
-        </span>
+        <span className="brand__glow__label f-edit t-upper">40 Countries</span>
       </span>
     </section>
   );
