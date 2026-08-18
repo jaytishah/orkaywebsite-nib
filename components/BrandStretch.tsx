@@ -148,16 +148,7 @@ export default function BrandStretch() {
           },
         });
         gl.to(q(".brand__globe"), { opacity: 1, duration: 1.0, ease: "none" }, 0);
-        gl.to(
-          q(".brand__glow"),
-          {
-            keyframes: { opacity: [0, 0.55, 0.3, 0.5] },
-            duration: 0.9,
-            ease: "none",
-          },
-          0.6
-        );
-        gl.to(q(".brand__glow__label"), { opacity: 1, duration: 0.6, ease: "none" }, 0.9);
+        gl.to(q(".brand__glow__label"), { opacity: 1, duration: 0.6, ease: "none" }, 0.6);
       }
     }, root);
 
@@ -194,7 +185,6 @@ export default function BrandStretch() {
           `is-3d`, which turns the CSS one off. */}
       <span className="brand__globe" aria-hidden>
         <Globe />
-        <span className="brand__glow" />
         <span className="brand__glow__label f-edit t-upper">40 Countries</span>
       </span>
     </section>
