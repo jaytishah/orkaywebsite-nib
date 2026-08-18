@@ -1582,8 +1582,7 @@ body.on-dark .navpill {
   background-repeat: repeat-x;
   box-shadow:
     inset -3vw -2.5vw 6vw rgba(0, 0, 0, 0.75),
-    inset 2vw 2vw 5vw rgba(255, 255, 255, 0.1),
-    0 0 7vw rgba(217, 58, 43, 0.28);
+    inset 2vw 2vw 5vw rgba(255, 255, 255, 0.1);
   animation: brand-globe-spin 90s linear infinite;
   opacity: 0;
 }
@@ -1593,12 +1592,11 @@ body.on-dark .navpill {
     background-position-x: -200%;
   }
 }
-/* Globe.tsx sets this once its first frame is on screen. The faked shading and
-   the scrolling texture go — the sphere brings its own — but the outer halo
-   stays, because it sits outside the silhouette where no shader reaches. */
+/* Globe.tsx sets this once its first frame is on screen: the faked shading
+   and the scrolling texture go, because the sphere brings its own. */
 .brand__globe.is-3d {
   background: none;
-  box-shadow: 0 0 7vw rgba(217, 58, 43, 0.28);
+  box-shadow: none;
   animation: none;
 }
 .brand__globe__gl {
