@@ -57,15 +57,12 @@ export default function HeroImage() {
         ))}
       </div>
 
-      {/* reference: the wordmark inverted in the bottom-right corner, its
-          line set above it — the whole block rotated, ® leading */}
+      {/* reference: the wordmark inverted in the bottom-right corner — the
+          whole block rotated, ® leading */}
       <div className="rail__images__mark">
         <span className="rail__images__mark__word f-edit t-upper">
           {HERO_MARK.name}
           <sup>®</sup>
-        </span>
-        <span className="rail__images__mark__tag f-edit">
-          {HERO_MARK.tagline}
         </span>
       </div>
     </div>

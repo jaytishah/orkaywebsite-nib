@@ -591,10 +591,6 @@ main .rail__images__mark__word sup {
   font-size: 0.35em;
   vertical-align: super;
 }
-main .rail__images__mark__tag {
-  font-size: var(--parrafo);
-  font-style: italic;
-}
 
 /* ---------- panel 3 : editorial statement ---------- */
 main .rail__text {

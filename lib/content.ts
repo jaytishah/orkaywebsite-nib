@@ -38,8 +38,7 @@ export const SOCIALS = [
  */
 export const HERO_MARK = {
   headline: "Rooms, not samples",
-  name: "Orchid Isles",
-  tagline: BRAND.tagline,
+  name: BRAND.name,
 } as const;
 
 export const NAV = [
